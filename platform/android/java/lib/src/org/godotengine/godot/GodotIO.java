@@ -534,9 +534,7 @@ public class GodotIO {
 	};
 
 	public void setScreenOrientation(int p_orientation) {
-		Log.v("Godot", "ORIENTATION " + p_orientation);
 		switch (p_orientation) {
-
 			case SCREEN_LANDSCAPE: {
 				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 			} break;
