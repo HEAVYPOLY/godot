@@ -223,6 +223,37 @@ void OSIPhone::key(uint32_t p_key, bool p_pressed) {
 	perform_event(ev);
 };
 
+void OSIPhone::pencil_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick) {
+	// if (GLOBAL_DEF("debug/disable_touch", false)) {
+	// 	return;
+	// }
+
+	Ref<InputEventMouseButton> ev;
+	ev.instance();
+	ev->set_button_index(1);
+	ev->set_position(Vector2(p_x, p_y));
+	ev->set_global_position(Vector2(p_x, p_y));
+	ev->set_pressed(p_pressed);
+	ev->set_doubleclick(p_doubleclick);
+	//ev->set_pressure(p_force);
+	//ev->set_tilt(p_tilt);
+	perform_event(ev);
+};
+
+void OSIPhone::pencil_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p_y, float p_force) {
+	// if (GLOBAL_DEF("debug/disable_touch", false)) {
+	// 	return;
+	// }
+
+	Ref<InputEventMouseMotion> ev;
+	ev.instance();
+	ev->set_position(Vector2(p_x, p_y));
+	ev->set_relative(Vector2(p_x - p_prev_x, p_y - p_prev_y));
+	ev->set_pressure(p_force);
+	// ev->set_tilt(p_tilt);
+	perform_event(ev);
+};
+
 void OSIPhone::touch_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick) {
 	if (GLOBAL_DEF("debug/disable_touch", false)) {
 		return;
