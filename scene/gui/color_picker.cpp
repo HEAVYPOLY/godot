@@ -55,6 +55,7 @@ void ColorPicker::_notification(int p_what) {
 			btn_pick->set_icon(get_icon("screen_picker", "ColorPicker"));
 			bt_add_preset->set_icon(get_icon("add_preset"));
 
+			_update_controls();
 			_update_color();
 
 #ifdef TOOLS_ENABLED
@@ -578,6 +579,8 @@ void ColorPicker::_preset_input(const Ref<InputEvent> &p_event) {
 }
 
 void ColorPicker::_screen_input(const Ref<InputEvent> &p_event) {
+	if (!is_inside_tree())
+		return;
 
 	Ref<InputEventMouseButton> bev = p_event;
 	if (bev.is_valid() && bev->get_button_index() == BUTTON_LEFT && !bev->is_pressed()) {
@@ -608,6 +611,9 @@ void ColorPicker::_add_preset_pressed() {
 }
 
 void ColorPicker::_screen_pick_pressed() {
+	if (!is_inside_tree())
+		return;
+
 	Viewport *r = get_tree()->get_root();
 	if (!screen) {
 		screen = memnew(Control);

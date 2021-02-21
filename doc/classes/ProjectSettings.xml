@@ -248,6 +248,14 @@
 		<member name="application/run/disable_stdout" type="bool" setter="" getter="" default="false">
 			If [code]true[/code], disables printing to standard output in an exported build.
 		</member>
+		<member name="application/run/flush_stdout_on_print" type="bool" setter="" getter="" default="false">
+			If [code]true[/code], flushes the standard output stream every time a line is printed. This affects both terminal logging and file logging.
+			When running a project, this setting must be enabled if you want logs to be collected by service managers such as systemd/journalctl. This setting is disabled by default on release builds, since flushing on every printed line will negatively affect performance if lots of lines are printed in a rapid succession. Also, if this setting is enabled, logged files will still be written successfully if the application crashes or is otherwise killed by the user (without being closed "normally").
+			[b]Note:[/b] Regardless of this setting, the standard error stream ([code]stderr[/code]) is always flushed when a line is printed to it.
+		</member>
+		<member name="application/run/flush_stdout_on_print.debug" type="bool" setter="" getter="" default="true">
+			Debug build override for [member application/run/flush_stdout_on_print], as performance is less important during debugging.
+		</member>
 		<member name="application/run/frame_delay_msec" type="int" setter="" getter="" default="0">
 			Forces a delay between frames in the main loop (in milliseconds). This may be useful if you plan to disable vertical synchronization.
 		</member>
@@ -1005,6 +1013,12 @@
 		</member>
 		<member name="physics/common/enable_object_picking" type="bool" setter="" getter="" default="true">
 			Enables [member Viewport.physics_object_picking] on the root viewport.
+		</member>
+		<member name="physics/common/enable_pause_aware_picking" type="bool" setter="" getter="" default="false">
+			If enabled, 2D and 3D physics picking behaves this way in relation to pause:
+			- When pause is started, every collision object that is hovered or captured (3D only) is released from that condition, getting the relevant mouse-exit callback, unless its pause mode makes it immune to pause.
+			- During pause, picking only considers collision objects immune to pause, sending input events and enter/exit callbacks to them as expected.
+			If disabled, the legacy behavior is used, which consists in queuing the picking input events during pause (so nodes won't get them) and flushing that queue on resume, against the state of the 2D/3D world at that point.
 		</member>
 		<member name="physics/common/physics_fps" type="int" setter="" getter="" default="60">
 			The number of fixed iterations per second. This controls how often physics simulation and [method Node._physics_process] methods are run.

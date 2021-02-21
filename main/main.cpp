@@ -346,13 +346,15 @@ void Main::print_help(const char *p_binary) {
  */
 
 Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_phase) {
+#if defined(DEBUG_ENABLED) && !defined(NO_THREADS)
+	check_lockless_atomics();
+#endif
+
 	RID_OwnerBase::init_rid();
 
 	OS::get_singleton()->initialize_core();
 
 	engine = memnew(Engine);
-
-	ClassDB::init();
 
 	MAIN_PRINT("Main: Initialize CORE");
 
@@ -360,8 +362,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	register_core_driver_types();
 
 	MAIN_PRINT("Main: Initialize Globals");
-
-	Thread::_main_thread_id = Thread::get_caller_id();
 
 	globals = memnew(ProjectSettings);
 	input_map = memnew(InputMap);
@@ -978,6 +978,11 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	}
 #endif
 
+	// Only flush stdout in debug builds by default, as spamming `print()` will
+	// decrease performance if this is enabled.
+	GLOBAL_DEF("application/run/flush_stdout_on_print", false);
+	GLOBAL_DEF("application/run/flush_stdout_on_print.debug", true);
+
 	GLOBAL_DEF("logging/file_logging/enable_file_logging", false);
 	// Only file logging by default on desktop platforms as logs can't be
 	// accessed easily on mobile/Web platforms (if at all).
@@ -1194,6 +1199,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	Engine::get_singleton()->set_physics_jitter_fix(GLOBAL_DEF("physics/common/physics_jitter_fix", 0.5));
 	Engine::get_singleton()->set_target_fps(GLOBAL_DEF("debug/settings/fps/force_fps", 0));
 	ProjectSettings::get_singleton()->set_custom_property_info("debug/settings/fps/force_fps", PropertyInfo(Variant::INT, "debug/settings/fps/force_fps", PROPERTY_HINT_RANGE, "0,120,1,or_greater"));
+	GLOBAL_DEF("physics/common/enable_pause_aware_picking", false);
 
 	GLOBAL_DEF("debug/settings/stdout/print_fps", false);
 	GLOBAL_DEF("debug/settings/stdout/verbose_stdout", false);
@@ -1271,9 +1277,11 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 	// Print engine name and version
 	print_line(String(VERSION_NAME) + " v" + get_full_version_string() + " - " + String(VERSION_WEBSITE));
 
+#if !defined(NO_THREADS)
 	if (p_main_tid_override) {
-		Thread::_main_thread_id = p_main_tid_override;
+		Thread::main_thread_id = p_main_tid_override;
 	}
+#endif
 
 	Error err = OS::get_singleton()->initialize(video_mode, video_driver_idx, audio_driver_idx);
 	if (err != OK) {
@@ -1301,7 +1309,7 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 
 	MAIN_PRINT("Main: Setup Logo");
 
-#ifdef JAVASCRIPT_ENABLED
+#if defined(JAVASCRIPT_ENABLED) || defined(ANDROID_ENABLED)
 	bool show_logo = false;
 #else
 	bool show_logo = true;
