@@ -350,7 +350,7 @@ static const int max_touches = 8;
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-	NSArray *tlist = [event.coalescedTouches allObjects];
+	NSArray *tlist = [event.allTouches allObjects];
 	for (unsigned int i = 0; i < [tlist count]; i++) {
 		if ([touches containsObject:[tlist objectAtIndex:i]]) {
 			UITouch *touch = [tlist objectAtIndex:i];
