@@ -1273,11 +1273,12 @@ int SceneTree::get_node_count() const {
 
 void SceneTree::_update_root_rect() {
 	if (stretch_mode == STRETCH_MODE_DISABLED) {
+
 		_update_font_oversampling(stretch_scale);
-		root->set_size(last_screen_size.floor());
+		root->set_size((last_screen_size / stretch_shrink).floor());
 		root->set_attach_to_screen_rect(Rect2(Point2(), last_screen_size));
 		root->set_size_override_stretch(true);
-		root->set_size_override(true, (last_screen_size / stretch_scale).floor());
+		root->set_size_override(true, (last_screen_size / (stretch_shrink * stretch_scale)).floor());
 		root->update_canvas_items();
 		return; //user will take care
 	}
@@ -1348,10 +1349,12 @@ void SceneTree::_update_root_rect() {
 	switch (stretch_mode) {
 		case STRETCH_MODE_DISABLED: {
 			// Already handled above
+
 		} break;
 		case STRETCH_MODE_2D: {
-			_update_font_oversampling((screen_size.x / viewport_size.x) * stretch_scale); //screen / viewport ratio drives oversampling
-			root->set_size(screen_size.floor());
+
+			_update_font_oversampling((screen_size.x / viewport_size.x) * stretch_scale); //screen / viewport radio drives oversampling
+			root->set_size((screen_size / stretch_shrink).floor());
 			root->set_attach_to_screen_rect(Rect2(margin, screen_size));
 			root->set_size_override_stretch(true);
 			root->set_size_override(true, (viewport_size / stretch_scale).floor());
@@ -1360,7 +1363,7 @@ void SceneTree::_update_root_rect() {
 		} break;
 		case STRETCH_MODE_VIEWPORT: {
 			_update_font_oversampling(1.0);
-			root->set_size((viewport_size / stretch_scale).floor());
+			root->set_size_override(true, (viewport_size / (stretch_shrink * stretch_scale)).floor());
 			root->set_attach_to_screen_rect(Rect2(margin, screen_size));
 			root->set_size_override_stretch(false);
 			root->set_size_override(false, Size2());
@@ -1370,10 +1373,12 @@ void SceneTree::_update_root_rect() {
 	}
 }
 
-void SceneTree::set_screen_stretch(StretchMode p_mode, StretchAspect p_aspect, const Size2 &p_minsize, real_t p_scale) {
+void SceneTree::set_screen_stretch(StretchMode p_mode, StretchAspect p_aspect, const Size2 &p_minsize, real_t p_shrink, real_t p_scale) {
+
 	stretch_mode = p_mode;
 	stretch_aspect = p_aspect;
 	stretch_min = p_minsize;
+	stretch_shrink = p_shrink;
 	stretch_scale = p_scale;
 	_update_root_rect();
 }
@@ -2005,7 +2010,7 @@ void SceneTree::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_frame"), &SceneTree::get_frame);
 	ClassDB::bind_method(D_METHOD("quit", "exit_code"), &SceneTree::quit, DEFVAL(-1));
 
-	ClassDB::bind_method(D_METHOD("set_screen_stretch", "mode", "aspect", "minsize", "scale"), &SceneTree::set_screen_stretch, DEFVAL(1));
+	ClassDB::bind_method(D_METHOD("set_screen_stretch", "mode", "aspect", "minsize", "shrink", "scale"), &SceneTree::set_screen_stretch, DEFVAL(1), DEFVAL(1));
 
 	ClassDB::bind_method(D_METHOD("set_physics_interpolation_enabled", "enabled"), &SceneTree::set_physics_interpolation_enabled);
 	ClassDB::bind_method(D_METHOD("is_physics_interpolation_enabled"), &SceneTree::is_physics_interpolation_enabled);
@@ -2312,6 +2317,7 @@ SceneTree::SceneTree() {
 
 	stretch_mode = STRETCH_MODE_DISABLED;
 	stretch_aspect = STRETCH_ASPECT_IGNORE;
+	stretch_shrink = 1.0;
 	stretch_scale = 1.0;
 
 	last_screen_size = OS::get_singleton()->get_window_size();

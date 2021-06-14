@@ -176,6 +176,14 @@ typedef UINT32 PEN_MASK;
 #define POINTER_MESSAGE_FLAG_FIRSTBUTTON 0x00000010
 #endif
 
+#ifndef IS_POINTER_FLAG_SET_WPARAM
+#define IS_POINTER_FLAG_SET_WPARAM(wParam, flag)    (((DWORD)HIWORD(wParam) & (flag)) == (flag))
+#endif
+
+#ifndef IS_POINTER_FIRSTBUTTON_WPARAM
+#define IS_POINTER_FIRSTBUTTON_WPARAM(wParam)       IS_POINTER_FLAG_SET_WPARAM(wParam, POINTER_MESSAGE_FLAG_FIRSTBUTTON)
+#endif
+
 enum tagPOINTER_INPUT_TYPE {
 	PT_POINTER = 0x00000001,
 	PT_TOUCH = 0x00000002,
@@ -239,6 +247,14 @@ typedef struct tagPOINTER_PEN_INFO {
 
 #ifndef WM_POINTERLEAVE
 #define WM_POINTERLEAVE 0x024A
+#endif
+
+#ifndef WM_POINTERDOWN
+#define WM_POINTERDOWN 0x0246
+#endif
+
+#ifndef WM_POINTERUP
+#define WM_POINTERUP 0x0247
 #endif
 
 typedef BOOL(WINAPI *GetPointerTypePtr)(uint32_t p_id, POINTER_INPUT_TYPE *p_type);

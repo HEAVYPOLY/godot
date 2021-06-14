@@ -34,7 +34,6 @@ import static org.godotengine.godot.utils.GLUtils.DEBUG;
 
 import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotView;
-
 import android.content.Context;
 import android.hardware.input.InputManager;
 import android.os.Build;
@@ -54,7 +53,14 @@ import java.util.Set;
 /**
  * Handles input related events for the {@link GodotView} view.
  */
+
 public class GodotInputHandler implements InputManager.InputDeviceListener {
+
+	private static final int SPEN_ACTION_DOWN = 211;
+	private static final int SPEN_ACTION_UP = 212;
+	private static final int SPEN_ACTION_MOVE = 213;
+	private static final int SPEN_ACTION_CANCEL = 214;
+
 	private static final String TAG = GodotInputHandler.class.getSimpleName();
 
 	private final SparseIntArray mJoystickIds = new SparseIntArray(4);
@@ -535,6 +541,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 				return true;
 			}
 		}
-		return false;
 	}
+
+
 }

@@ -430,6 +430,14 @@ float InputEventMouseButton::get_factor() const {
 	return factor;
 }
 
+void InputEventMouseButton::set_pressure(float p_pressure) {
+	pressure = p_pressure;
+}
+
+float InputEventMouseButton::get_pressure() const {
+	return pressure;
+}
+
 void InputEventMouseButton::set_button_index(int p_index) {
 	button_index = p_index;
 }
@@ -469,6 +477,7 @@ Ref<InputEvent> InputEventMouseButton::xformed_by(const Transform2D &p_xform, co
 	mb->set_pressed(pressed);
 	mb->set_doubleclick(doubleclick);
 	mb->set_factor(factor);
+	mb->set_pressure(pressure);
 	mb->set_button_index(button_index);
 
 	return mb;
@@ -557,6 +566,9 @@ void InputEventMouseButton::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_factor", "factor"), &InputEventMouseButton::set_factor);
 	ClassDB::bind_method(D_METHOD("get_factor"), &InputEventMouseButton::get_factor);
 
+	ClassDB::bind_method(D_METHOD("set_pressure", "pressure"), &InputEventMouseButton::set_pressure);
+	ClassDB::bind_method(D_METHOD("get_pressure"), &InputEventMouseButton::get_pressure);
+
 	ClassDB::bind_method(D_METHOD("set_button_index", "button_index"), &InputEventMouseButton::set_button_index);
 	ClassDB::bind_method(D_METHOD("get_button_index"), &InputEventMouseButton::get_button_index);
 
@@ -567,6 +579,7 @@ void InputEventMouseButton::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_doubleclick"), &InputEventMouseButton::is_doubleclick);
 
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "factor"), "set_factor", "get_factor");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "pressure"), "set_pressure", "get_pressure");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "button_index"), "set_button_index", "get_button_index");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "pressed"), "set_pressed", "is_pressed");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "doubleclick"), "set_doubleclick", "is_doubleclick");
@@ -574,6 +587,7 @@ void InputEventMouseButton::_bind_methods() {
 
 InputEventMouseButton::InputEventMouseButton() {
 	factor = 1;
+	pressure = 1;
 	button_index = 0;
 	pressed = false;
 	doubleclick = false;
