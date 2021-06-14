@@ -350,6 +350,7 @@ class InputEventMouseButton : public InputEventMouse {
 	GDCLASS(InputEventMouseButton, InputEventMouse);
 
 	float factor;
+	float pressure;
 	int button_index;
 	bool pressed; //otherwise released
 	bool doubleclick; //last even less than doubleclick time
@@ -361,6 +362,9 @@ public:
 	void set_factor(float p_factor);
 	float get_factor() const;
 
+	void set_pressure(float p_pressure);
+	float get_pressure() const;
+	
 	void set_button_index(int p_index);
 	int get_button_index() const;
 

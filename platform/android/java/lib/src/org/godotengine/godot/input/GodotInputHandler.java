@@ -34,7 +34,6 @@ import static org.godotengine.godot.utils.GLUtils.DEBUG;
 
 import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotView;
-
 import android.content.Context;
 import android.hardware.input.InputManager;
 import android.os.Build;
@@ -54,7 +53,14 @@ import java.util.Set;
 /**
  * Handles input related events for the {@link GodotView} view.
  */
+
 public class GodotInputHandler implements InputManager.InputDeviceListener {
+
+	private static final int SPEN_ACTION_DOWN = 211;
+	private static final int SPEN_ACTION_UP = 212;
+	private static final int SPEN_ACTION_MOVE = 213;
+	private static final int SPEN_ACTION_CANCEL = 214;
+
 	private final String tag = this.getClass().getSimpleName();
 
 	private final SparseIntArray mJoystickIds = new SparseIntArray(4);
@@ -142,14 +148,20 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 	public boolean onTouchEvent(final MotionEvent event) {
 		// Mouse drag (mouse pressed and move) doesn't fire onGenericMotionEvent so this is needed
 		if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
-			if (event.getAction() != MotionEvent.ACTION_MOVE) {
-				// we return true because every time a mouse event is fired, the event is already handled
-				// in onGenericMotionEvent, so by touch event we can say that the event is also handled
-				return true;
-			}
-			return handleMouseEvent(event);
+			// if (event.getAction() != MotionEvent.ACTION_MOVE){
+				// return true;
+				// // 	// we return true because every time a mouse event is fired, the event is already handled
+				// // 	// in onGenericMotionEvent, so by touch event we can say that the event is also handled
+				// 	return handleMouseEvent(event);
+			
+				// }
+			// return true;
+			return handleStylusEvent(event);
+			// return handleMouseEvent(event);
 		}
-
+		if (event.isFromSource(InputDevice.SOURCE_STYLUS)) {
+			return handleStylusEvent(event);
+		}
 		final int evcount = event.getPointerCount();
 		if (evcount == 0)
 			return true;
@@ -213,18 +225,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 				}
 				return true;
 			}
-		} else if (event.isFromSource(InputDevice.SOURCE_STYLUS)) {
-			final float x = event.getX();
-			final float y = event.getY();
-			final int type = event.getAction();
-			GodotLib.hover(type, x, y);
-			return true;
-		} else if ((event.isFromSource(InputDevice.SOURCE_MOUSE))) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-				return handleMouseEvent(event);
-			}
 		}
-
 		return false;
 	}
 
@@ -402,24 +403,41 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 	}
 
 	private boolean handleMouseEvent(final MotionEvent event) {
+		// Log.i(tag, "HANDLE MOUSEY " + event.getSource());
 		switch (event.getActionMasked()) {
 			case MotionEvent.ACTION_HOVER_ENTER:
 			case MotionEvent.ACTION_HOVER_MOVE:
 			case MotionEvent.ACTION_HOVER_EXIT: {
+				Log.i(tag, "HANDLEMOUSE HOVER");
 				final float x = event.getX();
 				final float y = event.getY();
 				final int type = event.getAction();
 				GodotLib.hover(type, x, y);
 				return true;
 			}
+			case MotionEvent.ACTION_DOWN:
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_POINTER_DOWN:
+			case MotionEvent.ACTION_POINTER_UP:
 			case MotionEvent.ACTION_BUTTON_PRESS:
-			case MotionEvent.ACTION_BUTTON_RELEASE:
+			case MotionEvent.ACTION_BUTTON_RELEASE: {
+				final float x = event.getX();
+				final float y = event.getY();
+				final int buttonsMask = event.getButtonState();
+				final int action = event.getAction();
+				final float pressure = event.getPressure();
+				Log.i(tag, "HANDLEMOUSE TOUCH " + action + " BUTTON STATE : " + buttonsMask + " PRESSURE " + pressure);
+				GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask, pressure);
+				return true;
+			}
 			case MotionEvent.ACTION_MOVE: {
 				final float x = event.getX();
 				final float y = event.getY();
 				final int buttonsMask = event.getButtonState();
 				final int action = event.getAction();
-				GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask);
+				final float pressure = event.getPressure();
+				Log.i(tag, "HANDLEMOUSE MOVE " + action + " BUTTON STATE : " + buttonsMask + " PRESSURE " + pressure);
+				GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask, pressure);
 				return true;
 			}
 			case MotionEvent.ACTION_SCROLL: {
@@ -431,7 +449,68 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 				final float horizontalFactor = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
 				GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask, verticalFactor, horizontalFactor);
 			}
+			// default: {
+				// 	return true;
+				// }
+			}
+			return false;
 		}
-		return false;
+		
+		private boolean handleStylusEvent(final MotionEvent event) {
+			switch (event.getActionMasked()) {
+				case SPEN_ACTION_DOWN:
+				case SPEN_ACTION_UP:
+				case SPEN_ACTION_MOVE:
+				case MotionEvent.ACTION_DOWN:
+				case MotionEvent.ACTION_UP:
+				case MotionEvent.ACTION_BUTTON_PRESS:
+				case MotionEvent.ACTION_BUTTON_RELEASE:
+				case MotionEvent.ACTION_MOVE: {
+					final float x = event.getX();
+					final float y = event.getY();
+					final float pressure = event.getPressure();
+					int buttonsMask = event.getButtonState();
+					switch (buttonsMask) {
+						case 0:
+							buttonsMask = MotionEvent.BUTTON_PRIMARY;
+							break;
+						case MotionEvent.BUTTON_STYLUS_PRIMARY:
+							buttonsMask = MotionEvent.BUTTON_SECONDARY;
+							break;
+						case MotionEvent.BUTTON_STYLUS_SECONDARY:
+							buttonsMask = MotionEvent.BUTTON_TERTIARY;
+							break;
+					}
+					// int buttonsMask = MotionEvent.BUTTON_PRIMARY;
+					
+					int action = event.getAction();
+					switch (action) {
+						case SPEN_ACTION_DOWN:
+						case MotionEvent.ACTION_DOWN:
+							action = MotionEvent.ACTION_BUTTON_PRESS;
+							break;
+						case SPEN_ACTION_UP:
+						case MotionEvent.ACTION_UP:
+							action = MotionEvent.ACTION_BUTTON_RELEASE;
+							buttonsMask = 0;
+							break;
+						case SPEN_ACTION_MOVE:
+							action = MotionEvent.ACTION_MOVE;
+							break;
+					}
+					
+					final int mappedAction = action;
+					final int mappedButtonsMask = buttonsMask;
+					Log.i(tag, "HANDLESYLUS EVENT " + mappedAction + " BUTTON STATE : " + mappedButtonsMask);
+					GodotLib.touch(event.getSource(), mappedAction, 0, 1, new float[] { 0, x, y }, mappedButtonsMask, pressure);
+					
+				return true;
+			}
+			default: {
+				return handleMouseEvent(event);
+			}
+		}
 	}
+
+
 }

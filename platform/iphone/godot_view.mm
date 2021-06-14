@@ -343,7 +343,7 @@ static const int max_touches = 8;
 			CGPoint touchPoint = [touch locationInView:self];
 
 			if (touch.type == UITouchTypeStylus) {
-				OSIPhone::get_singleton()->pencil_press(tid, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor, true, touch.tapCount > 1);
+				OSIPhone::get_singleton()->pencil_press(tid, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor, true, touch.tapCount > 1, touch.force);
 			} else {
 				OSIPhone::get_singleton()->touch_press(tid, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor, true, touch.tapCount > 1);
 			}
@@ -382,7 +382,7 @@ static const int max_touches = 8;
 			[self removeTouch:touch];
 			CGPoint touchPoint = [touch locationInView:self];
 			if (touch.type == UITouchTypeStylus) {
-				OSIPhone::get_singleton()->pencil_press(tid, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor, false, false);
+				OSIPhone::get_singleton()->pencil_press(tid, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor, false, false, touch.force);
 			} else {
 				OSIPhone::get_singleton()->touch_press(tid, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor, false, false);
 			}

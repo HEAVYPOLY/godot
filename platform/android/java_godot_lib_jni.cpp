@@ -277,7 +277,7 @@ JNIEXPORT jboolean JNICALL Java_org_godotengine_godot_GodotLib_step(JNIEnv *env,
 	return should_swap_buffers;
 }
 
-void touch_preprocessing(JNIEnv *env, jclass clazz, jint input_device, jint ev, jint pointer, jint pointer_count, jfloatArray positions, jint buttons_mask, jfloat vertical_factor, jfloat horizontal_factor) {
+void touch_preprocessing(JNIEnv *env, jclass clazz, jint input_device, jint ev, jint pointer, jint pointer_count, jfloatArray positions, jint buttons_mask, jfloat vertical_factor, jfloat horizontal_factor, jfloat pressure) {
 	if (step.get() <= 0)
 		return;
 
@@ -291,8 +291,9 @@ void touch_preprocessing(JNIEnv *env, jclass clazz, jint input_device, jint ev, 
 		points.push_back(tp);
 	}
 
-	if ((input_device & AINPUT_SOURCE_MOUSE) == AINPUT_SOURCE_MOUSE) {
-		input_handler->process_mouse_event(ev, buttons_mask, points[0].pos, vertical_factor, horizontal_factor);
+
+	if ((input_device & AINPUT_SOURCE_MOUSE) == AINPUT_SOURCE_MOUSE || (input_device & AINPUT_SOURCE_STYLUS) == AINPUT_SOURCE_STYLUS) {
+		input_handler->process_mouse_event(ev, buttons_mask, points[0].pos, vertical_factor, horizontal_factor, pressure);
 	} else {
 		input_handler->process_touch(ev, pointer, points);
 	}
@@ -306,6 +307,11 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_touch__IIII_3F(JNIEnv
 // Called on the UI thread
 JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_touch__IIII_3FI(JNIEnv *env, jclass clazz, jint input_device, jint ev, jint pointer, jint pointer_count, jfloatArray position, jint buttons_mask) {
 	touch_preprocessing(env, clazz, input_device, ev, pointer, pointer_count, position, buttons_mask);
+}
+
+// Called on the UI thread
+JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_touch__IIII_3FIF(JNIEnv *env, jclass clazz, jint input_device, jint ev, jint pointer, jint pointer_count, jfloatArray position, jint buttons_mask, jfloat pressure) {
+	touch_preprocessing(env, clazz, input_device, ev, pointer, pointer_count, position, buttons_mask, 0, 0, pressure);
 }
 
 // Called on the UI thread

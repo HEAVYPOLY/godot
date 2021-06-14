@@ -2825,7 +2825,11 @@ void OS_X11::process_xevents() {
 				} else {
 					DEBUG_LOG_X11("[%u] ButtonRelease window=%lu, button_index=%u \n", frame, event.xbutton.window, mb->get_button_index());
 				}
-
+				if (xi.pressure_supported) {
+					mb->set_pressure(xi.pressure);
+				} else {
+					mb->set_pressure((get_mouse_button_state() & (1 << (BUTTON_LEFT - 1))) ? 1.0f : 0.0f);
+				}
 				input->parse_input_event(mb);
 
 			} break;

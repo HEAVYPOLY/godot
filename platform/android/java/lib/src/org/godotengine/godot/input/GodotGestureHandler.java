@@ -35,6 +35,7 @@ import org.godotengine.godot.GodotView;
 
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+// import android.util.Log;
 
 /**
  * Handles gesture input related events for the {@link GodotView} view.
@@ -66,16 +67,16 @@ public class GodotGestureHandler extends GestureDetector.SimpleOnGestureListener
 
 	@Override
 	public void onLongPress(MotionEvent event) {
-		//Log.i("GodotGesture", "onLongPress");
+		// Log.i("GodotGesture", "onLongPress");
 	}
 
 	@Override
 	public boolean onDoubleTap(MotionEvent event) {
-		//Log.i("GodotGesture", "onDoubleTap");
-		final int x = Math.round(event.getX());
-		final int y = Math.round(event.getY());
-		final int buttonMask = event.getButtonState();
-		GodotLib.doubleTap(buttonMask, x, y);
+		// Log.i("GodotGesture", "onDoubleTap");
+		// final int x = Math.round(event.getX());
+		// final int y = Math.round(event.getY());
+		// final int buttonMask = event.getButtonState() + (event.getToolType(event.getActionIndex()) != MotionEvent.TOOL_TYPE_MOUSE ? 1 : 0) * event.getPointerCount();;
+		// GodotLib.doubleTap(buttonMask, x, y);
 		return true;
 	}
 
@@ -90,7 +91,7 @@ public class GodotGestureHandler extends GestureDetector.SimpleOnGestureListener
 
 	@Override
 	public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-		//Log.i("GodotGesture", "onFling");
+		// Log.i("GodotGesture", "onFling");
 		return true;
 	}
 }
