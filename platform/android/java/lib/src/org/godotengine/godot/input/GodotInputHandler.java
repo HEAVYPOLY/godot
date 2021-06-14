@@ -141,7 +141,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 
 	public boolean onTouchEvent(final MotionEvent event) {
 		// Mouse drag (mouse pressed and move) doesn't fire onGenericMotionEvent so this is needed
-		if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
+		if (event.isFromSource(InputDevice.SOURCE_MOUSE) || event.isFromSource(InputDevice.SOURCE_STYLUS)) {
 			if (event.getAction() != MotionEvent.ACTION_MOVE) {
 				// we return true because every time a mouse event is fired, the event is already handled
 				// in onGenericMotionEvent, so by touch event we can say that the event is also handled
