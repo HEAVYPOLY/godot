@@ -43,8 +43,6 @@
 class DirAccessUnix : public DirAccess {
 	DIR *dir_stream;
 
-	static DirAccess *create_fs();
-
 	String current_dir;
 	bool _cisdir;
 	bool _cishidden;
