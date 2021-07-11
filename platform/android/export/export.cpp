@@ -846,7 +846,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 		_get_permissions(p_preset, p_give_internet, perms);
 		for (int i = 0; i < perms.size(); i++) {
 			String permission = perms.get(i);
-			if (permission == "android.permission.WRITE_EXTERNAL_STORAGE" || permission == "android.permission.READ_EXTERNAL_STORAGE") {
+			if (permission == "android.permission.WRITE_EXTERNAL_STORAGE") {
 				manifest_text += vformat("    <uses-permission android:name=\"%s\" android:maxSdkVersion=\"29\" />\n", permission);
 			} else {
 				manifest_text += vformat("    <uses-permission android:name=\"%s\" />\n", permission);
