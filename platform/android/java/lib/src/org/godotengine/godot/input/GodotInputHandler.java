@@ -456,12 +456,7 @@ public class GodotInputHandler implements InputDeviceListener {
 				final int buttonsMask = event.getButtonState();
 				final int action = event.getAction();
 				Log.i(tag, "STYLUS MOUSE TOUCH ACTION: " + action + " BUTTON STATE : " + buttonsMask);
-				queueEvent(new Runnable() {
-					@Override
-					public void run() {
-						GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask);
-					}
-				});
+				GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask);
 				return true;
 			}
 			case MotionEvent.ACTION_MOVE: {
