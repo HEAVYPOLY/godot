@@ -30,12 +30,7 @@
 
 package org.godotengine.godot;
 
-import org.godotengine.godot.io.directory.DirectoryAccessHandler;
-import org.godotengine.godot.io.file.FileAccessHandler;
-import org.godotengine.godot.utils.GodotNetUtils;
-
 import android.app.Activity;
-import android.content.res.AssetManager;
 import android.hardware.SensorEvent;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -44,6 +39,8 @@ import javax.microedition.khronos.opengles.GL10;
  * Wrapper for native library
  */
 public class GodotLib {
+	public static GodotIO io;
+
 	static {
 		System.loadLibrary("godot_android");
 	}
@@ -51,7 +48,7 @@ public class GodotLib {
 	/**
 	 * Invoked on the main thread to initialize Godot native layer.
 	 */
-	public static native void initialize(Activity activity, Godot p_instance, AssetManager p_asset_manager, GodotIO godotIO, GodotNetUtils netUtils, DirectoryAccessHandler directoryAccessHandler, FileAccessHandler fileAccessHandler, boolean use_apk_expansion);
+	public static native void initialize(Activity activity, Godot p_instance, Object p_asset_manager, boolean use_apk_expansion);
 
 	/**
 	 * Invoked on the main thread to clean up Godot native layer.

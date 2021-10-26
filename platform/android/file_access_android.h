@@ -35,14 +35,14 @@
 #include <android/asset_manager.h>
 #include <android/log.h>
 #include <stdio.h>
+//#include <android_native_app_glue.h>
 
 class FileAccessAndroid : public FileAccess {
+	static FileAccess *create_android();
 	mutable AAsset *a;
 	mutable uint64_t len;
 	mutable uint64_t pos;
 	mutable bool eof;
-	String absolute_path;
-	String path_src;
 
 public:
 	static AAssetManager *asset_manager;
@@ -50,11 +50,6 @@ public:
 	virtual Error _open(const String &p_path, int p_mode_flags); ///< open a file
 	virtual void close(); ///< close a file
 	virtual bool is_open() const; ///< true when file is open
-
-	/// returns the path for the current open file
-	virtual String get_path() const;
-	/// returns the absolute path for the current open file
-	virtual String get_path_absolute() const;
 
 	virtual void seek(uint64_t p_position); ///< seek to a given position
 	virtual void seek_end(int64_t p_position = 0); ///< seek from the end of file
@@ -76,6 +71,8 @@ public:
 	virtual uint64_t _get_modified_time(const String &p_file) { return 0; }
 	virtual uint32_t _get_unix_permissions(const String &p_file) { return 0; }
 	virtual Error _set_unix_permissions(const String &p_file, uint32_t p_permissions) { return FAILED; }
+
+	//static void make_default();
 
 	FileAccessAndroid();
 	~FileAccessAndroid();
