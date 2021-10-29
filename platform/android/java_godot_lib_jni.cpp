@@ -285,6 +285,8 @@ void touch_preprocessing(JNIEnv *env, jclass clazz, jint input_device, jint ev, 
 
 	if ((input_device & AINPUT_SOURCE_MOUSE) == AINPUT_SOURCE_MOUSE) {
 		input_handler->process_mouse_event(ev, buttons_mask, points[0].pos, vertical_factor, horizontal_factor, pressure);
+	} else if ((input_device & AINPUT_SOURCE_STYLUS) == AINPUT_SOURCE_STYLUS) {
+		input_handler->process_mouse_event(ev, buttons_mask, points[0].pos, vertical_factor, horizontal_factor, pressure);
 	} else {
 		input_handler->process_touch(ev, pointer, points);
 	}
