@@ -339,12 +339,12 @@ int AndroidInputHandler::_button_index_from_mask(int button_mask) {
 		case BUTTON_MASK_XBUTTON2:
 			return BUTTON_XBUTTON2;
 		default:
-			return 0;
+			return BUTTON_LEFT;
 	}
 }
 
 int AndroidInputHandler::_android_button_mask_to_godot_button_mask(int android_button_mask) {
-	int godot_button_mask = 0;
+	int godot_button_mask = 1;
 	if (android_button_mask & AMOTION_EVENT_BUTTON_PRIMARY) {
 		godot_button_mask |= BUTTON_MASK_LEFT;
 	}
