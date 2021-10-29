@@ -48,6 +48,8 @@ import android.graphics.PixelFormat;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.util.Log;
+
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -103,11 +105,13 @@ public class GodotView extends GLSurfaceView {
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		Log.i(tag, " ON TOUCH EVENT ");
+		
 		super.onTouchEvent(event);
 		this.detector.onTouchEvent(event);
 		return inputHandler.onTouchEvent(event);
 	}
-
+	
 	@Override
 	public boolean onKeyUp(final int keyCode, KeyEvent event) {
 		return inputHandler.onKeyUp(keyCode, event) || super.onKeyUp(keyCode, event);
@@ -117,9 +121,10 @@ public class GodotView extends GLSurfaceView {
 	public boolean onKeyDown(final int keyCode, KeyEvent event) {
 		return inputHandler.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
 	}
-
+	
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent event) {
+		Log.i(tag, " ON GENERIC EVENT ");
 		return inputHandler.onGenericMotionEvent(event) || super.onGenericMotionEvent(event);
 	}
 
