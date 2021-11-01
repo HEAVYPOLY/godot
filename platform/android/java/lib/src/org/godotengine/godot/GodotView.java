@@ -105,8 +105,6 @@ public class GodotView extends GLSurfaceView {
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		Log.i(TAG, " ON TOUCH EVENT ");
-		
 		super.onTouchEvent(event);
 		this.detector.onTouchEvent(event);
 		return inputHandler.onTouchEvent(event);
@@ -124,7 +122,6 @@ public class GodotView extends GLSurfaceView {
 	
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent event) {
-		Log.i(TAG, " ON GENERIC EVENT ");
 		return inputHandler.onGenericMotionEvent(event) || super.onGenericMotionEvent(event);
 	}
 

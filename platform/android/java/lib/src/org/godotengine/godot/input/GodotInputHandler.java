@@ -420,7 +420,7 @@ public class GodotInputHandler implements InputDeviceListener {
 			case MotionEvent.ACTION_HOVER_ENTER:
 			case MotionEvent.ACTION_HOVER_MOVE:
 			case MotionEvent.ACTION_HOVER_EXIT: {
-				Log.i(tag, "STYLUS MOUSE HOVER INSIDE HANDLEMOUSE EVENT");
+				// Log.i(tag, "STYLUS MOUSE HOVER INSIDE HANDLEMOUSE EVENT");
 				final float x = event.getX();
 				final float y = event.getY();
 				final int type = event.getAction();
@@ -437,7 +437,7 @@ public class GodotInputHandler implements InputDeviceListener {
 				final float y = event.getY();
 				final int buttonsMask = event.getButtonState();
 				final int action = event.getAction();
-				Log.i(tag, "STYLUS MOUSE TOUCH INSIDE HANDLEMOUSE EVENT " + action + " BUTTON STATE : " + buttonsMask);
+				// Log.i(tag, "STYLUS MOUSE TOUCH INSIDE HANDLEMOUSE EVENT " + action + " BUTTON STATE : " + buttonsMask);
 				GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask);
 				return true;
 			}
@@ -447,7 +447,7 @@ public class GodotInputHandler implements InputDeviceListener {
 				final int buttonsMask = event.getButtonState();
 				final int action = event.getAction();
 				final float pressure = event.getPressure();
-				Log.i(tag, "STYLUS MOUSE TOUCH ACTION: " + action + " BUTTON STATE : " + buttonsMask + " PRESSURE " + pressure);
+				// Log.i(tag, "STYLUS MOUSE TOUCH ACTION: " + action + " BUTTON STATE : " + buttonsMask + " PRESSURE " + pressure);
 				GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask, pressure);
 				return true;
 			}
