@@ -283,16 +283,15 @@ void touch_preprocessing(JNIEnv *env, jclass clazz, jint input_device, jint ev, 
 		points.push_back(tp);
 	}
 
-	if ((input_device & AINPUT_SOURCE_MOUSE) == AINPUT_SOURCE_MOUSE) {
+
+	if ((input_device & AINPUT_SOURCE_MOUSE) == AINPUT_SOURCE_MOUSE || (input_device & AINPUT_SOURCE_STYLUS) == AINPUT_SOURCE_STYLUS) {
 		input_handler->process_mouse_event(ev, buttons_mask, points[0].pos, vertical_factor, horizontal_factor, pressure);
-		// input_handler->process_mouse_event(ev, buttons_mask, points[0].pos, pressure);
-	} else if ((input_device & AINPUT_SOURCE_STYLUS) == AINPUT_SOURCE_STYLUS) {
-		// input_handler->process_mouse_event(ev, buttons_mask, points[0].pos, vertical_factor, horizontal_factor, pressure);
-		input_handler->process_mouse_event(ev, buttons_mask, points[0].pos, vertical_factor, horizontal_factor, pressure);
-		// input_handler->process_mouse_event(ev, buttons_mask, points[0].pos, pressure);
 	} else {
 		input_handler->process_touch(ev, pointer, points);
 	}
+	// } else {
+	// 	input_handler->process_touch(ev, pointer, points);
+	// }
 }
 
 // Called on the UI thread
