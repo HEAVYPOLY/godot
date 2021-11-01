@@ -48,6 +48,8 @@ import android.opengl.GLSurfaceView;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.util.Log;
+
 
 /**
  * A simple GLSurfaceView sub-class that demonstrate how to perform
@@ -100,7 +102,7 @@ public class GodotView extends GLSurfaceView {
 		this.detector.onTouchEvent(event);
 		return inputHandler.onTouchEvent(event);
 	}
-
+	
 	@Override
 	public boolean onKeyUp(final int keyCode, KeyEvent event) {
 		return inputHandler.onKeyUp(keyCode, event) || super.onKeyUp(keyCode, event);
@@ -110,7 +112,7 @@ public class GodotView extends GLSurfaceView {
 	public boolean onKeyDown(final int keyCode, KeyEvent event) {
 		return inputHandler.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
 	}
-
+	
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent event) {
 		return inputHandler.onGenericMotionEvent(event) || super.onGenericMotionEvent(event);
