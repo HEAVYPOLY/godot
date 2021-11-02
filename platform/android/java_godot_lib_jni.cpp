@@ -289,9 +289,6 @@ void touch_preprocessing(JNIEnv *env, jclass clazz, jint input_device, jint ev, 
 	} else {
 		input_handler->process_touch(ev, pointer, points);
 	}
-	// } else {
-	// 	input_handler->process_touch(ev, pointer, points);
-	// }
 }
 
 // Called on the UI thread
