@@ -1,8 +1,8 @@
-def can_build(plat):
+def can_build(env, plat):
 	return plat=="android" or plat=="iphone"
 
 def configure(env):
-	if (env['platform'] == 'android'):
+	if env['platform'] == 'android':
 		env.android_add_java_dir("android")
 		env.android_add_to_manifest("android/AndroidManifestChunk.xml")
 		#uncomment this line to godot <= 3.0.6
