@@ -223,18 +223,6 @@ public class GodotInputHandler implements InputDeviceListener {
 				}
 				return true;
 			}
-		// } else if (event.isFromSource(InputDevice.SOURCE_STYLUS)) {
-		// 	return handleMouseEvent(event);
-		// 	// final float x = event.getX();
-		// 	// final float y = event.getY();
-		// 	// final int type = event.getAction();
-		// 	// GodotLib.hover(type, x, y);
-		// 	// return true;
-		// if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-		// } else if ((event.isFromSource(InputDevice.SOURCE_MOUSE))) {
-		// 	return handleMouseEvent(event);
-		// 	// }
-		// }
 		}
 		return false;
 	}
