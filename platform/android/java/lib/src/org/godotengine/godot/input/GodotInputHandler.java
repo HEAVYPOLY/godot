@@ -467,36 +467,34 @@ public class GodotInputHandler implements InputDeviceListener {
 					final float x = event.getX();
 					final float y = event.getY();
 					final float pressure = event.getPressure();
-					// int buttonsMask = event.getButtonState();
-					// switch (buttonsMask) {
-						// 	case 0:
-						// 	buttonsMask = MotionEvent.BUTTON_PRIMARY;
-						// 	break;
-						// 	case MotionEvent.BUTTON_STYLUS_PRIMARY:
-						// 	buttonsMask = MotionEvent.BUTTON_PRIMARY;
-						// 	break;
-						// 	case MotionEvent.BUTTON_STYLUS_SECONDARY:
-					// 	buttonsMask = MotionEvent.BUTTON_SECONDARY;
-					// 	case MotionEvent.BUTTON_STYLUS_TERTIARY:
-					// 	buttonsMask = MotionEvent.BUTTON_TERTIARY;
-					// 	break;
-					// }
-					int buttonsMask = MotionEvent.BUTTON_PRIMARY;
+					int buttonsMask = event.getButtonState();
+					switch (buttonsMask) {
+						case 0:
+							buttonsMask = MotionEvent.BUTTON_PRIMARY;
+							break;
+						case MotionEvent.BUTTON_STYLUS_PRIMARY:
+							buttonsMask = MotionEvent.BUTTON_SECONDARY;
+							break;
+						case MotionEvent.BUTTON_STYLUS_SECONDARY:
+							buttonsMask = MotionEvent.BUTTON_TERTIARY;
+							break;
+					}
+					// int buttonsMask = MotionEvent.BUTTON_PRIMARY;
 					
 					int action = event.getAction();
 					switch (action) {
 						case SPEN_ACTION_DOWN:
 						case MotionEvent.ACTION_DOWN:
-						action = MotionEvent.ACTION_BUTTON_PRESS;
-						break;
+							action = MotionEvent.ACTION_BUTTON_PRESS;
+							break;
 						case SPEN_ACTION_UP:
 						case MotionEvent.ACTION_UP:
-						action = MotionEvent.ACTION_BUTTON_RELEASE;
-						buttonsMask = 0;
-						break;
+							action = MotionEvent.ACTION_BUTTON_RELEASE;
+							buttonsMask = 0;
+							break;
 						case SPEN_ACTION_MOVE:
-						action = MotionEvent.ACTION_MOVE;
-						break;
+							action = MotionEvent.ACTION_MOVE;
+							break;
 					}
 					
 					final int mappedAction = action;
