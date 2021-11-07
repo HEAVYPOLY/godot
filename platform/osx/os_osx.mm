@@ -697,6 +697,7 @@ static void _mouseDownEvent(NSEvent *event, int index, int mask, bool pressed) {
 	get_key_modifier_state([event modifierFlags], mb);
 	mb->set_button_index(index);
 	mb->set_pressed(pressed);
+	mb->set_pressure([event pressure]);
 	mb->set_position(pos);
 	mb->set_global_position(pos);
 	mb->set_button_mask(button_mask);
