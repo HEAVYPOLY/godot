@@ -6,6 +6,8 @@ env:
   GODOT_BASE_BRANCH: 3.x
   SCONSFLAGS: platform=osx verbose=yes warnings=all werror=yes debug_symbols=no --jobs=2
   SCONS_CACHE_LIMIT: 4096
+on: [push, pull_request]
+
 
 jobs:
   macos-editor:
@@ -109,3 +111,15 @@ jobs:
           name: ${{ github.job }}
           path: bin/*
           retention-days: 14
+
+    runs-on: "ubuntu-latest"
+    name: Upload to dropbox
+    
+    steps:
+      - name: deka dropbox
+        uses: deka0106/upload-to-dropbox@v2
+        with:
+          dropbox_access_token: ${{ secrets.DROPBOX_ACCESS_TOKEN }}
+          src: bin/*
+          dest: /git-builds/
+          multiple: true
