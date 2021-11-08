@@ -111,7 +111,7 @@ jobs:
           name: ${{ github.job }}
           path: bin/*
           retention-days: 14
-
+  upload-dropbox:
     runs-on: "ubuntu-latest"
     name: Upload to dropbox
     
