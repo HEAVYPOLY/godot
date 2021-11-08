@@ -115,5 +115,5 @@ jobs:
         with:
           dropbox_access_token: ${{ secrets.DROPBOX_ACCESS_TOKEN }}
           src: bin/*
-          dest: /git-builds/
+          dest: /
           multiple: true
