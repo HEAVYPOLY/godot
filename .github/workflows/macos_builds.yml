@@ -109,11 +109,7 @@ jobs:
           name: ${{ github.job }}
           path: bin/*
           retention-days: 14
-  upload-dropbox:
-    runs-on: "ubuntu-latest"
-    name: Upload to dropbox
-    
-    steps:
+
       - name: deka dropbox
         uses: deka0106/upload-to-dropbox@v2
         with:
