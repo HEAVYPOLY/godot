@@ -812,7 +812,11 @@ LRESULT OS_Windows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		case WM_XBUTTONUP: {
 			Ref<InputEventMouseButton> mb;
 			mb.instance();
-
+			if (pen_info.penMask & PEN_MASK_PRESSURE) {
+				mb->set_pressure((float)pen_info.pressure / 1024);
+			} else {
+				mb->set_pressure((HIWORD(wParam) & POINTER_MESSAGE_FLAG_FIRSTBUTTON) ? 1.0f : 0.0f);
+			}
 			switch (uMsg) {
 				case WM_LBUTTONDOWN: {
 					mb->set_pressed(true);
