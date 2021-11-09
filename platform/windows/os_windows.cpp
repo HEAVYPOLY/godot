@@ -812,11 +812,32 @@ LRESULT OS_Windows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		case WM_XBUTTONUP: {
 			Ref<InputEventMouseButton> mb;
 			mb.instance();
-			if (pen_info.penMask & PEN_MASK_PRESSURE) {
-				mb->set_pressure((float)pen_info.pressure / 1024);
+
+			if ((get_current_tablet_driver() == "wintab") && wintab_available && wtctx) {
+				// Note: WinTab sends both WT_PACKET and WM_xBUTTONDOWN/UP/MOUSEMOVE events, use mouse 1/0 pressure only when last_pressure was not update recently.
+				if (last_pressure_update < 10) {
+					last_pressure_update++;
+				} else {
+					last_tilt = Vector2();
+					last_pressure = (wParam & MK_LBUTTON) ? 1.0f : 0.0f;
+				}
 			} else {
-				mb->set_pressure((HIWORD(wParam) & POINTER_MESSAGE_FLAG_FIRSTBUTTON) ? 1.0f : 0.0f);
+				last_tilt = Vector2();
+				last_pressure = (wParam & MK_LBUTTON) ? 1.0f : 0.0f;
 			}
+
+			mb->set_pressure(last_pressure);
+			// POINTER_PEN_INFO pen_info;
+			// if (!win8p_GetPointerPenInfo(pointer_id, &pen_info)) {
+			// 	break;
+			// }
+			
+			// if (pen_info.penMask & PEN_MASK_PRESSURE) {
+			// 	mb->set_pressure((float)pen_info.pressure / 1024);
+			// } else {
+			// 	mb->set_pressure((HIWORD(wParam) & POINTER_MESSAGE_FLAG_FIRSTBUTTON) ? 1.0f : 0.0f);
+			// }
+
 			switch (uMsg) {
 				case WM_LBUTTONDOWN: {
 					mb->set_pressed(true);
