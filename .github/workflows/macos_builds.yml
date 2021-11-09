@@ -109,3 +109,11 @@ jobs:
           name: ${{ github.job }}
           path: bin/*
           retention-days: 14
+
+      - name: deka dropbox
+        uses: deka0106/upload-to-dropbox@v2
+        with:
+          dropbox_access_token: ${{ secrets.DROPBOX_ACCESS_TOKEN }}
+          src: bin/*
+          dest: /
+          multiple: true
