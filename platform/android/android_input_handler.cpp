@@ -250,11 +250,10 @@ void AndroidInputHandler::process_mouse_event(int event_action, int event_androi
 			ev->set_global_position(event_pos);
 			ev->set_pressed(event_action == AMOTION_EVENT_ACTION_BUTTON_PRESS);
 			int changed_button_mask = buttons_state ^ event_buttons_mask;
-
 			buttons_state = event_buttons_mask;
-
 			ev->set_button_index(_button_index_from_mask(changed_button_mask));
 			ev->set_button_mask(event_buttons_mask);
+			ev->set_pressure(pressure);
 			input->parse_input_event(ev);
 			hover_prev_pos = event_pos;
 		} break;

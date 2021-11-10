@@ -426,8 +426,9 @@ public class GodotInputHandler implements InputDeviceListener {
 				final float y = event.getY();
 				final int buttonsMask = event.getButtonState();
 				final int action = event.getAction();
-				Log.i(tag, "HANDLEMOUSE TOUCH " + action + " BUTTON STATE : " + buttonsMask);
-				GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask);
+				final float pressure = event.getPressure();
+				Log.i(tag, "HANDLEMOUSE TOUCH " + action + " BUTTON STATE : " + buttonsMask, " PRESSURE " + pressure);
+				GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask, pressure);
 				return true;
 			}
 			case MotionEvent.ACTION_MOVE: {
