@@ -240,7 +240,7 @@ void OSIPhone::pencil_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p
 };
 
 void OSIPhone::pencil_cancelled(int p_idx) {
-	pencil_press(p_idx, -1, -1, false, false);
+	pencil_press(p_idx, -1, -1, false, false, 0.0);
 }
 
 void OSIPhone::touch_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick) {
