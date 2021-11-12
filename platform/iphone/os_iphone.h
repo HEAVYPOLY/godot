@@ -123,7 +123,7 @@ public:
 
 	virtual int get_screen_dpi(int p_screen = -1) const;
 
-	void pencil_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick);
+	void pencil_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick, float p_force);
 	void touch_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick);
 	void pencil_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p_y, float p_force);
 	void touch_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p_y);
