@@ -303,9 +303,14 @@ public:
 	String get_joy_guid_remapped(int p_device) const;
 	void set_fallback_mapping(String p_guid);
 
+<<<<<<< HEAD
 	virtual void flush_buffered_events();
 	virtual bool is_using_input_buffering();
 	virtual void set_use_input_buffering(bool p_enable);
+=======
+	virtual void accumulate_input_event(const Ref<InputEvent> &p_event);
+	virtual void flush_accumulated_events();
+>>>>>>> parent of 58a54f534e (Improve input event accumulation)
 	virtual void set_use_accumulated_input(bool p_enable);
 
 	virtual void release_pressed_events();
