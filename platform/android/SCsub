@@ -4,7 +4,6 @@ Import("env")
 
 android_files = [
     "os_android.cpp",
-    "android_input_handler.cpp",
     "file_access_android.cpp",
     "audio_driver_opensl.cpp",
     "dir_access_jandroid.cpp",

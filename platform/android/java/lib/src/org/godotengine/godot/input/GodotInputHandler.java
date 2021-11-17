@@ -74,6 +74,10 @@ public class GodotInputHandler implements InputDeviceListener {
 		this.inputManager.registerInputDeviceListener(this, null);
 	}
 
+	private void queueEvent(Runnable task) {
+		godotView.queueEvent(task);
+	}
+
 	private boolean isKeyEvent_GameDevice(int source) {
 		// Note that keyboards are often (SOURCE_KEYBOARD | SOURCE_DPAD)
 		if (source == (InputDevice.SOURCE_KEYBOARD | InputDevice.SOURCE_DPAD))
@@ -98,12 +102,13 @@ public class GodotInputHandler implements InputDeviceListener {
 			if (mJoystickIds.indexOfKey(deviceId) >= 0) {
 				final int button = getGodotButton(keyCode);
 				final int godotJoyId = mJoystickIds.get(deviceId);
-				GodotLib.joybutton(godotJoyId, button, false);
+
+				queueEvent(() -> GodotLib.joybutton(godotJoyId, button, false));
 			}
 		} else {
 			final int scanCode = event.getScanCode();
 			final int chr = event.getUnicodeChar(0);
-			GodotLib.key(keyCode, scanCode, chr, false);
+			queueEvent(() -> GodotLib.key(keyCode, scanCode, chr, false));
 		};
 
 		return true;
@@ -133,12 +138,13 @@ public class GodotInputHandler implements InputDeviceListener {
 			if (mJoystickIds.indexOfKey(deviceId) >= 0) {
 				final int button = getGodotButton(keyCode);
 				final int godotJoyId = mJoystickIds.get(deviceId);
-				GodotLib.joybutton(godotJoyId, button, true);
+
+				queueEvent(() -> GodotLib.joybutton(godotJoyId, button, true));
 			}
 		} else {
 			final int scanCode = event.getScanCode();
 			final int chr = event.getUnicodeChar(0);
-			GodotLib.key(keyCode, scanCode, chr, true);
+			queueEvent(() -> GodotLib.key(keyCode, scanCode, chr, true));
 		}
 
 		return true;
@@ -176,16 +182,18 @@ public class GodotInputHandler implements InputDeviceListener {
 			final int action = event.getActionMasked();
 			final int pointer_idx = event.getPointerId(event.getActionIndex());
 
-			switch (action) {
-				case MotionEvent.ACTION_DOWN:
-				case MotionEvent.ACTION_CANCEL:
-				case MotionEvent.ACTION_UP:
-				case MotionEvent.ACTION_MOVE:
-				case MotionEvent.ACTION_POINTER_UP:
-				case MotionEvent.ACTION_POINTER_DOWN: {
-					GodotLib.touch(event.getSource(), action, pointer_idx, evcount, arr);
-				} break;
-			}
+			godotView.queueEvent(() -> {
+				switch (action) {
+					case MotionEvent.ACTION_DOWN:
+					case MotionEvent.ACTION_CANCEL:
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_MOVE:
+					case MotionEvent.ACTION_POINTER_UP:
+					case MotionEvent.ACTION_POINTER_DOWN: {
+						GodotLib.touch(event.getSource(), action, pointer_idx, evcount, arr);
+					} break;
+				}
+			});
 		}
 		return true;
 	}
@@ -209,7 +217,7 @@ public class GodotInputHandler implements InputDeviceListener {
 						// save value to prevent repeats
 						joystick.axesValues.put(axis, value);
 						final int godotAxisIdx = i;
-						GodotLib.joyaxis(godotJoyId, godotAxisIdx, value);
+						queueEvent(() -> GodotLib.joyaxis(godotJoyId, godotAxisIdx, value));
 					}
 				}
 
@@ -219,10 +227,20 @@ public class GodotInputHandler implements InputDeviceListener {
 					if (joystick.hatX != hatX || joystick.hatY != hatY) {
 						joystick.hatX = hatX;
 						joystick.hatY = hatY;
-						GodotLib.joyhat(godotJoyId, hatX, hatY);
+						queueEvent(() -> GodotLib.joyhat(godotJoyId, hatX, hatY));
 					}
 				}
 				return true;
+			}
+		} else if (event.isFromSource(InputDevice.SOURCE_STYLUS)) {
+			final float x = event.getX();
+			final float y = event.getY();
+			final int type = event.getAction();
+			queueEvent(() -> GodotLib.hover(type, x, y));
+			return true;
+		} else if ((event.isFromSource(InputDevice.SOURCE_MOUSE))) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				return handleMouseEvent(event);
 			}
 		}
 		return false;
@@ -308,7 +326,7 @@ public class GodotInputHandler implements InputDeviceListener {
 		}
 		mJoysticksDevices.put(deviceId, joystick);
 
-		GodotLib.joyconnectionchanged(id, true, joystick.name);
+		queueEvent(() -> GodotLib.joyconnectionchanged(id, true, joystick.name));
 	}
 
 	@Override
@@ -320,7 +338,8 @@ public class GodotInputHandler implements InputDeviceListener {
 		final int godotJoyId = mJoystickIds.get(deviceId);
 		mJoystickIds.delete(deviceId);
 		mJoysticksDevices.delete(deviceId);
-		GodotLib.joyconnectionchanged(godotJoyId, false, "");
+
+		queueEvent(() -> GodotLib.joyconnectionchanged(godotJoyId, false, ""));
 	}
 
 	@Override
@@ -411,7 +430,7 @@ public class GodotInputHandler implements InputDeviceListener {
 				final float x = event.getX();
 				final float y = event.getY();
 				final int type = event.getAction();
-				GodotLib.hover(type, x, y);
+				queueEvent(() -> GodotLib.hover(type, x, y));
 				return true;
 			}
 			case MotionEvent.ACTION_DOWN:
@@ -424,8 +443,7 @@ public class GodotInputHandler implements InputDeviceListener {
 				final float y = event.getY();
 				final int buttonsMask = event.getButtonState();
 				final int action = event.getAction();
-				Log.i(tag, "HANDLEMOUSE TOUCH " + action + " BUTTON STATE : " + buttonsMask);
-				GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask);
+				queueEvent(() -> GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask));
 				return true;
 			}
 			case MotionEvent.ACTION_MOVE: {
@@ -445,7 +463,7 @@ public class GodotInputHandler implements InputDeviceListener {
 				final int action = event.getAction();
 				final float verticalFactor = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
 				final float horizontalFactor = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
-				GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask, verticalFactor, horizontalFactor);
+				queueEvent(() -> GodotLib.touch(event.getSource(), action, 0, 1, new float[] { 0, x, y }, buttonsMask, verticalFactor, horizontalFactor));
 			}
 			// default: {
 				// 	return true;
