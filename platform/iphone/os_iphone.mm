@@ -270,6 +270,7 @@ void OSIPhone::touch_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p_
 
 void OSIPhone::perform_event(const Ref<InputEvent> &p_event) {
 	input->parse_input_event(p_event);
+	input->flush_buffered_events();
 }
 
 void OSIPhone::touches_cancelled(int p_idx) {
