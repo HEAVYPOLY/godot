@@ -713,6 +713,7 @@ LRESULT OS_Windows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 				if (window_has_focus && main_loop)
 					input->parse_input_event(mb);
 				return 0;
+				break;
 				}
 
 			Ref<InputEventMouseMotion> mm;
