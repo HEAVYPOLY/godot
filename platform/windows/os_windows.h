@@ -163,7 +163,7 @@ typedef UINT32 PEN_MASK;
 
 #define IS_POINTER_FIRSTBUTTON_WPARAM(wParam)
 #define IS_POINTER_FLAG_SET_WPARAM(wParam, POINTER_MESSAGE_FLAG_FIRSTBUTTON)
-// #define IS_POINTER_FLAG_SET_WPARAM(wParam, flag) (((DWORD)HIWORD(wParam) & (flag)) == (flag))
+#define IS_POINTER_FLAG_SET_WPARAM(wParam, flag) (((DWORD)HIWORD(wParam) & (flag)) == (flag))
 
 enum tagPOINTER_INPUT_TYPE {
 	PT_POINTER = 0x00000001,
