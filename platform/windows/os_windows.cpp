@@ -29,8 +29,7 @@
 /*************************************************************************/
 
 #include "os_windows.h"
-#include "windows.h"
-#include "winuser.h"
+
 #include "core/io/marshalls.h"
 #include "core/math/geometry.h"
 #include "core/version_generated.gen.h"
@@ -47,12 +46,15 @@
 #include "servers/visual/visual_server_wrap_mt.h"
 #include "windows_terminal_logger.h"
 
+#include <iostream>
 #include <avrt.h>
 #include <direct.h>
 #include <knownfolders.h>
 #include <process.h>
 #include <regstr.h>
 #include <shlobj.h>
+
+using namespace std;
 
 static const WORD MAX_CONSOLE_LINES = 1500;
 
@@ -573,6 +575,96 @@ LRESULT OS_Windows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			block_mm = false;
 			return 0;
 		} break;
+		case WM_POINTERUP:
+		case WM_POINTERDOWN: {
+			if (!window_has_focus && mouse_mode == MOUSE_MODE_CAPTURED)
+				break;
+			if ((get_current_tablet_driver() != "winink") || !winink_available) {
+				break;
+			}
+
+			uint32_t pointer_id = LOWORD(wParam);
+			POINTER_INPUT_TYPE pointer_type = PT_POINTER;
+			if (!win8p_GetPointerType(pointer_id, &pointer_type)) {
+				break;
+			}
+
+			if (pointer_type != PT_PEN) {
+				break;
+			}
+
+			POINTER_PEN_INFO pen_info;
+			if (!win8p_GetPointerPenInfo(pointer_id, &pen_info)) {
+				break;
+			}
+
+			if (input->is_emulating_mouse_from_touch()) {
+				// Universal translation enabled; ignore OS translation
+				LPARAM extra = GetMessageExtraInfo();
+				if (IsTouchEvent(extra)) {
+					break;
+				}
+			}
+
+			Ref<InputEventMouseButton> mb;
+			mb.instance();
+
+			if (pen_info.penMask & PEN_MASK_PRESSURE) {
+				mb->set_pressure((float)pen_info.pressure / 1024);
+			} else {
+				mb->set_pressure((HIWORD(wParam) & POINTER_MESSAGE_FLAG_FIRSTBUTTON) ? 1.0f : 0.0f);
+			}
+
+			mb->set_control(GetKeyState(VK_CONTROL) < 0);
+			mb->set_shift(GetKeyState(VK_SHIFT) < 0);
+			mb->set_alt(alt_mem);
+
+			mb->set_button_mask(last_button_state);
+
+			POINT coords; //client coords
+			coords.x = GET_X_LPARAM(lParam);
+			coords.y = GET_Y_LPARAM(lParam);
+
+			ScreenToClient(hWnd, &coords);
+
+			mb->set_position(Vector2(coords.x, coords.y));
+			mb->set_global_position(Vector2(coords.x, coords.y));
+			mb->set_pressed((uMsg == WM_POINTERDOWN));
+			mb->set_button_index(1);
+			if (mouse_mode == MOUSE_MODE_CAPTURED) {
+				Point2i c(video_mode.width / 2, video_mode.height / 2);
+				old_x = c.x;
+				old_y = c.y;
+
+				if (mb->get_position() == c) {
+					center = c;
+					return 0;
+				}
+
+				Point2i ncenter = mb->get_position();
+				center = ncenter;
+				POINT pos = { (int)c.x, (int)c.y };
+				ClientToScreen(hWnd, &pos);
+				SetCursorPos(pos.x, pos.y);
+			}
+
+			input->set_mouse_position(mb->get_position());
+
+			if (old_invalid) {
+				old_x = mb->get_position().x;
+				old_y = mb->get_position().y;
+				old_invalid = false;
+			}
+
+			// mb->set_relative(Vector2(mb->get_position() - Vector2(old_x, old_y)));
+			old_x = mb->get_position().x;
+			old_y = mb->get_position().y;
+			
+			if (window_has_focus && main_loop)
+				input->parse_input_event(mb);
+			// cout << "POINTER DOWN " <<pen_info.pressure<<"   "<<(pen_info.pressure / 1024.0f) <<"   "<<old_x<<"   "<<old_y<<endl;
+			return 0;
+		} break;
 		case WM_POINTERUPDATE: {
 			if (mouse_mode == MOUSE_MODE_CAPTURED && use_raw_input) {
 				break;
@@ -628,60 +720,11 @@ LRESULT OS_Windows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			// Don't calculate relative mouse movement if we don't have focus in CAPTURED mode.
 			if (!window_has_focus && mouse_mode == MOUSE_MODE_CAPTURED)
 				break;
-
-			if (IS_POINTER_FIRSTBUTTON_WPARAM(wParam)) {
-				Ref<InputEventMouseButton> mb;
-				mb.instance();
-
-				if (pen_info.penMask & PEN_MASK_PRESSURE) {
-					mb->set_pressure((float)pen_info.pressure / 1024);
-				} else {
-					mb->set_pressure((HIWORD(wParam) & POINTER_MESSAGE_FLAG_FIRSTBUTTON) ? 1.0f : 0.0f);
-				}
-				mb->set_control(GetKeyState(VK_CONTROL) < 0);
-				mb->set_shift(GetKeyState(VK_SHIFT) < 0);
-				mb->set_alt(alt_mem);
-
-				mb->set_button_mask(last_button_state);
-
-				POINT coords; //client coords
-				coords.x = GET_X_LPARAM(lParam);
-				coords.y = GET_Y_LPARAM(lParam);
-
-				ScreenToClient(hWnd, &coords);
-
-				mb->set_position(Vector2(coords.x, coords.y));
-				mb->set_global_position(Vector2(coords.x, coords.y));
-				if (mouse_mode == MOUSE_MODE_CAPTURED) {
-					Point2i c(video_mode.width / 2, video_mode.height / 2);
-					old_x = c.x;
-					old_y = c.y;
-
-					if (mb->get_position() == c) {
-						center = c;
-						return 0;
-					}
-
-					Point2i ncenter = mb->get_position();
-					center = ncenter;
-					POINT pos = { (int)c.x, (int)c.y };
-					ClientToScreen(hWnd, &pos);
-					SetCursorPos(pos.x, pos.y);
-				}
-
-				input->set_mouse_position(mb->get_position());
-
-				if (old_invalid) {
-					old_x = mb->get_position().x;
-					old_y = mb->get_position().y;
-					old_invalid = false;
-				}
-				if (window_has_focus && main_loop)
-					input->parse_input_event(mb);
-				return 0;
-				break;
-				}
-
+			// if (IS_POINTER_FIRSTBUTTON_WPARAM(wParam)){
+			// 	cout<<"POINTER FIRSTBUTTON WPARAM"<<endl;
+			// }else{
+			// 	cout << "POINTER UPDATE "<< (pen_info.pressure / 1024.0f)<<"   "<<old_x<<"   "<<old_y<<endl;
+			// }
 			Ref<InputEventMouseMotion> mm;
 			mm.instance();
 
@@ -846,6 +889,7 @@ LRESULT OS_Windows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		case WM_LBUTTONUP:
 			if (block_mm) {
 				break;
+				return 0;
 			}
 			if (input->is_emulating_mouse_from_touch()) {
 				// Universal translation enabled; ignore OS translations for left button
