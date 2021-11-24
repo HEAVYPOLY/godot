@@ -234,6 +234,14 @@ typedef struct tagPOINTER_PEN_INFO {
 #define WM_POINTERLEAVE 0x024A
 #endif
 
+#ifndef WM_POINTERDOWN
+#define WM_POINTERDOWN 0x0246
+#endif
+
+#ifndef WM_POINTERUP
+#define WM_POINTERUP 0x0247
+#endif
+
 typedef BOOL(WINAPI *GetPointerTypePtr)(uint32_t p_id, POINTER_INPUT_TYPE *p_type);
 typedef BOOL(WINAPI *GetPointerPenInfoPtr)(uint32_t p_id, POINTER_PEN_INFO *p_pen_info);
 
