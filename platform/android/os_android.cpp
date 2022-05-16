@@ -43,6 +43,7 @@
 
 #include "dir_access_jandroid.h"
 #include "file_access_android.h"
+#include "file_access_filesystem_jandroid.h"
 #include "net_socket_android.h"
 
 #include <android/input.h>
@@ -104,29 +105,35 @@ const char *OS_Android::get_audio_driver_name(int p_driver) const {
 void OS_Android::initialize_core() {
 	OS_Unix::initialize_core();
 
+
 #ifdef TOOLS_ENABLED
 	FileAccess::make_default<FileAccessUnix>(FileAccess::ACCESS_RESOURCES);
 #else
-	if (use_apk_expansion)
+	// File access setup
+	if (use_apk_expansion) {
 		FileAccess::make_default<FileAccessUnix>(FileAccess::ACCESS_RESOURCES);
-	else {
+	} else {
 		FileAccess::make_default<FileAccessAndroid>(FileAccess::ACCESS_RESOURCES);
 	}
 #endif
 	FileAccess::make_default<FileAccessUnix>(FileAccess::ACCESS_USERDATA);
-	FileAccess::make_default<FileAccessUnix>(FileAccess::ACCESS_FILESYSTEM);
 
 #ifdef TOOLS_ENABLED
 	DirAccess::make_default<DirAccessUnix>(DirAccess::ACCESS_RESOURCES);
 #else
-	if (use_apk_expansion)
+	if (use_apk_expansion) {
+		FileAccess::make_default<FileAccessFilesystemJAndroid>(FileAccess::ACCESS_FILESYSTEM);
+	}
+	// Directory access setup
+	if (use_apk_expansion) {
 		DirAccess::make_default<DirAccessUnix>(DirAccess::ACCESS_RESOURCES);
-	else
+	} else {
 		DirAccess::make_default<DirAccessJAndroid>(DirAccess::ACCESS_RESOURCES);
 #endif
+	}
 
 	DirAccess::make_default<DirAccessUnix>(DirAccess::ACCESS_USERDATA);
-	DirAccess::make_default<DirAccessUnix>(DirAccess::ACCESS_FILESYSTEM);
+	DirAccess::make_default<DirAccessJAndroid>(DirAccess::ACCESS_FILESYSTEM);
 
 	NetSocketAndroid::make_default();
 }
