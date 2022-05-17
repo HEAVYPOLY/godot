@@ -34,7 +34,6 @@ import static org.godotengine.godot.utils.GLUtils.DEBUG;
 
 import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotView;
-
 import android.content.Context;
 import android.hardware.input.InputManager;
 import android.os.Build;
@@ -55,7 +54,7 @@ import java.util.Set;
  * Handles input related events for the {@link GodotView} view.
  */
 
-public class GodotInputHandler implements InputDeviceListener {
+public class GodotInputHandler implements InputManager.InputDeviceListener {
 
 	private static final int SPEN_ACTION_DOWN = 211;
 	private static final int SPEN_ACTION_UP = 212;
