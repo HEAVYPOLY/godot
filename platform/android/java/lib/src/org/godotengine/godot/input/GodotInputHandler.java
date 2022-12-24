@@ -541,6 +541,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 				return true;
 			}
 		}
+		return false;
 	}
 
 
