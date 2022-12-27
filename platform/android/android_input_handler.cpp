@@ -185,7 +185,6 @@ void AndroidInputHandler::process_touch_event(int p_event, int p_pointer, const 
 
 					Ref<InputEventScreenTouch> ev;
 					ev.instance();
-
 					ev->set_index(tp.id);
 					ev->set_pressed(true);
 					ev->set_position(tp.pos);
@@ -248,17 +247,23 @@ void AndroidInputHandler::_release_mouse_event_info(bool p_source_mouse_relative
 
 
 void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_android_buttons_mask, Point2 p_event_pos, Vector2 p_delta, bool p_double_click, bool p_source_mouse_relative, float p_pressure) {
-	print_line("CPP MOUSE P " + itos(p_pressure * 100));
 	int event_buttons_mask = _android_button_mask_to_godot_button_mask(p_event_android_buttons_mask);
+	// print_line("CPP MOUSE ID " + itos(p_event_action) +  " BUTTON MASK = " + itos(event_buttons_mask) + " PRESSURE = " + itos(p_pressure * 100) );
 	switch (p_event_action) {
+		// case GodotInputHandler.SPEN_ACTION_DOWN:
+		// case GodotInputHandler.SPEN_ACTION_UP:
+		case AMOTION_EVENT_ACTION_DOWN:
+		case AMOTION_EVENT_ACTION_UP:
+		case AMOTION_EVENT_ACTION_POINTER_UP:
 		case AMOTION_EVENT_ACTION_BUTTON_PRESS:
 		case AMOTION_EVENT_ACTION_BUTTON_RELEASE: {
+			print_line("CPP MOUSE BUTTON! " + itos(p_event_action) + " PRESSURE " + itos(p_pressure * 100) + " PRESSED " + itos(p_event_action == AMOTION_EVENT_ACTION_BUTTON_PRESS));
 			Ref<InputEventMouseButton> ev;
 			ev.instance();
 			_set_key_modifier_state(ev);
 			ev->set_position(p_event_pos);
 			ev->set_global_position(p_event_pos);
-			ev->set_pressed(p_event_action == AMOTION_EVENT_ACTION_BUTTON_PRESS);
+			ev->set_pressed(p_event_action == AMOTION_EVENT_ACTION_BUTTON_PRESS || p_event_action == AMOTION_EVENT_ACTION_DOWN);
 			int changed_button_mask = buttons_state ^ event_buttons_mask;
 			buttons_state = event_buttons_mask;
 			ev->set_button_index(_button_index_from_mask(changed_button_mask));
@@ -267,7 +272,7 @@ void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_an
 			input->parse_input_event(ev);
 			hover_prev_pos = p_event_pos;
 		} break;
-
+		// case GodotInputHandler.SPEN_ACTION_MOVE:
 		case AMOTION_EVENT_ACTION_MOVE: {
 			// if (!mouse_event_info.valid) {
 			// 	print_line("CPP MOUSE EVENT INVALID");

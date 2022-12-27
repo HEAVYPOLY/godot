@@ -299,11 +299,10 @@ JNIEXPORT jboolean JNICALL Java_org_godotengine_godot_GodotLib_step(JNIEnv *env,
 }
 // Called on the UI thread
 JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_dispatchMouseEvent(JNIEnv *env, jclass clazz, jint p_event_type, jint p_button_mask, jfloat p_x, jfloat p_y, jfloat p_delta_x, jfloat p_delta_y, jboolean p_double_click, jboolean p_source_mouse_relative, jfloat p_pressure) {
-	// print_line("HI FROM JAVA TOUCH " + String::num(pointer_count));
-	print_line("HI FROM JAVA MOUSE DISPATCH! " + String::num(p_pressure));
 	if (step.get() <= 0) {
 		return;
 	}
+	print_line("HI FROM JAVA MOUSE DISPATCH! TYPE = " + String::num(p_event_type) + " EVENT TYPE = " +  String::num(p_event_type) + " PRESSURE = " + String::num(p_pressure));
 
 	input_handler->process_mouse_event(p_event_type, p_button_mask, Point2(p_x, p_y), Vector2(p_delta_x, p_delta_y), p_double_click, p_source_mouse_relative, p_pressure);
 }
