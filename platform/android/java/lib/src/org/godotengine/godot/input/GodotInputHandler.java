@@ -435,7 +435,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		// 	mouseSource = mouseSource || ((eventSource & InputDevice.SOURCE_MOUSE_RELATIVE) == InputDevice.SOURCE_MOUSE_RELATIVE);
 		// }
 		if (eventSource == 20482) {
-			System.out.println("ismouseevent eventsource == 20482");
+			// System.out.println("ismouseevent eventsource == 20482");
 			mouseSource = true;
 		}
 		System.out.println("ismouseevent EVENTSOURCE" + eventSource + " MOUSESOURCE " + mouseSource);
@@ -460,11 +460,10 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		return handleMotionEvent(eventSource, eventAction, buttonsMask, x, y, 0, 0, doubleTap);
 	}
 
-	static boolean handleMotionEvent(int eventSource, int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, boolean doubleTap) {
+	static boolean handleMotionEvent(int eventSource, int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, boolean doubleTap, float pressure) {
 		if (isMouseEvent(eventSource)) {
-			System.out.println("handleMotionEvent isMouseEvent erf");
-
-			return handleMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleTap, false, 0.55555f);
+			// System.out.println("handleMotionEvent isMouseEvent erf");
+			return handleMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleTap, false, pressure);
 		}
 
 		return handleTouchEvent(eventAction, x, y, doubleTap);
@@ -528,7 +527,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		// follow ACTION_DOWN and ACTION_UP events. As such, handling them would result in duplicate
 		// stream of events to the engine.
 
-		System.out.println("JAVA HandleMouseEvent ACTION " + eventAction + "  PRESSURE " + pressure);
+		// System.out.println("JAVA HandleMouseEvent ACTION " + eventAction + "  PRESSURE " + pressure);
 		switch (eventAction) {
 			case MotionEvent.ACTION_CANCEL:
 			case SPEN_ACTION_UP:
@@ -546,7 +545,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 			case MotionEvent.ACTION_MOVE:
 			case SPEN_ACTION_MOVE:
 			case MotionEvent.ACTION_SCROLL: {
-				System.out.println("Before dispatchMouseEvent "+pressure);
+				// System.out.println("Before dispatchMouseEvent "+pressure);
 				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, pressure);
 				return true;
 			}
