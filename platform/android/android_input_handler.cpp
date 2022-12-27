@@ -36,6 +36,8 @@
 
 #include <iostream>
 
+#include <string>
+
 void AndroidInputHandler::process_joy_event(const JoypadEvent &p_event) {
 	switch (p_event.type) {
 		case JOY_EVENT_BUTTON:
@@ -123,6 +125,8 @@ void AndroidInputHandler::_release_all_touch() {
 }
 
 void AndroidInputHandler::process_touch_event(int p_event, int p_pointer, const Vector<TouchPos> &p_points, bool p_double_tap) {
+	print_line("CPP Touch ");
+
 	switch (p_event) {
 		case AMOTION_EVENT_ACTION_DOWN: { //gesture begin
 			// Release any remaining touches or mouse event
@@ -209,10 +213,10 @@ void AndroidInputHandler::process_touch_event(int p_event, int p_pointer, const 
 	}
 }
 
-void AndroidInputHandler::_parse_mouse_event_info(int buttons_mask, bool p_pressed, bool p_double_click, bool p_source_mouse_relative) {
-	if (!mouse_event_info.valid) {
-		return;
-	}
+void AndroidInputHandler::_parse_mouse_event_info(int buttons_mask, bool p_pressed, bool p_double_click, bool p_source_mouse_relative, float p_pressure) {
+	// if (!mouse_event_info.valid) {
+	// 	return;
+	// }
 
 	Ref<InputEventMouseButton> ev;
 	ev.instance();
@@ -226,6 +230,7 @@ void AndroidInputHandler::_parse_mouse_event_info(int buttons_mask, bool p_press
 		hover_prev_pos = mouse_event_info.pos;
 	}
 	ev->set_pressed(p_pressed);
+	ev->set_pressure(p_pressure);
 	int changed_button_mask = buttons_state ^ buttons_mask;
 
 	buttons_state = buttons_mask;
@@ -234,48 +239,16 @@ void AndroidInputHandler::_parse_mouse_event_info(int buttons_mask, bool p_press
 	ev->set_button_mask(buttons_mask);
 	ev->set_doubleclick(p_double_click);
 	input->parse_input_event(ev);
-}
+} 
 
 void AndroidInputHandler::_release_mouse_event_info(bool p_source_mouse_relative) {
-	_parse_mouse_event_info(0, false, false, p_source_mouse_relative);
+	_parse_mouse_event_info(0, false, false, p_source_mouse_relative, .3);
 	mouse_event_info.valid = false;
 }
 
-void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_android_buttons_mask, Point2 p_event_pos, Vector2 p_delta, bool p_double_click, bool p_source_mouse_relative) {
-	int event_buttons_mask = _android_button_mask_to_godot_button_mask(p_event_android_buttons_mask);
-	switch (p_event_action) {
-		case AMOTION_EVENT_ACTION_HOVER_MOVE: // hover move
-		case AMOTION_EVENT_ACTION_HOVER_ENTER: // hover enter
-		case AMOTION_EVENT_ACTION_HOVER_EXIT: { // hover exit
-			// https://developer.android.com/reference/android/view/MotionEvent.html#ACTION_HOVER_ENTER
-			Ref<InputEventMouseMotion> ev;
-			ev.instance();
-			_set_key_modifier_state(ev);
-			ev->set_position(p_event_pos);
-			ev->set_global_position(p_event_pos);
-			ev->set_relative(p_event_pos - hover_prev_pos);
-			input->parse_input_event(ev);
-			hover_prev_pos = p_event_pos;
-		} break;
-
-		case AMOTION_EVENT_ACTION_DOWN:
-		case AMOTION_EVENT_ACTION_BUTTON_PRESS: {
-			// Release any remaining touches or mouse event
-			_release_mouse_event_info();
-			_release_all_touch();
-
-			mouse_event_info.valid = true;
-			mouse_event_info.pos = p_event_pos;
-			_parse_mouse_event_info(event_buttons_mask, true, p_double_click, p_source_mouse_relative);
-		} break;
-	};
-}
-
-
 
 void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_android_buttons_mask, Point2 p_event_pos, Vector2 p_delta, bool p_double_click, bool p_source_mouse_relative, float p_pressure) {
-	std::cout << "process_mouse_event" << p_pressure << std::end;
-	
+	print_line("CPP MOUSE P " + itos(p_pressure * 100));
 	int event_buttons_mask = _android_button_mask_to_godot_button_mask(p_event_android_buttons_mask);
 	switch (p_event_action) {
 		case AMOTION_EVENT_ACTION_BUTTON_PRESS:
@@ -296,10 +269,11 @@ void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_an
 		} break;
 
 		case AMOTION_EVENT_ACTION_MOVE: {
-			if (!mouse_event_info.valid) {
-				return;
-			}
-
+			// if (!mouse_event_info.valid) {
+			// 	print_line("CPP MOUSE EVENT INVALID");
+			// 	return;
+			// }
+			print_line("CPP MOUSE MOVE!");
 			Ref<InputEventMouseMotion> ev;
 			ev.instance();
 			_set_key_modifier_state(ev);

@@ -299,7 +299,8 @@ JNIEXPORT jboolean JNICALL Java_org_godotengine_godot_GodotLib_step(JNIEnv *env,
 }
 // Called on the UI thread
 JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_dispatchMouseEvent(JNIEnv *env, jclass clazz, jint p_event_type, jint p_button_mask, jfloat p_x, jfloat p_y, jfloat p_delta_x, jfloat p_delta_y, jboolean p_double_click, jboolean p_source_mouse_relative, jfloat p_pressure) {
-	print_line("HI FROM JAVA MOUSE DISPATCH" + String::num(p_pressure));
+	// print_line("HI FROM JAVA TOUCH " + String::num(pointer_count));
+	print_line("HI FROM JAVA MOUSE DISPATCH! " + String::num(p_pressure));
 	if (step.get() <= 0) {
 		return;
 	}
@@ -312,7 +313,7 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_dispatchTouchEvent(JN
 	if (step.get() <= 0) {
 		return;
 	}
-	print_line("HI FROM JAVA TOUCH" + String::num(pointer_count));
+	print_line("HI FROM JAVA TOUCH " + String::num(pointer_count));
 	Vector<AndroidInputHandler::TouchPos> points;
 	for (int i = 0; i < pointer_count; i++) {
 		jfloat p[3];
