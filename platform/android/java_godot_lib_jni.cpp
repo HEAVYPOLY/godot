@@ -52,6 +52,7 @@
 
 #include <android/input.h>
 #include <unistd.h>
+#include <iostream>
 
 static JavaClassWrapper *java_class_wrapper = nullptr;
 static OS_Android *os_android = nullptr;
@@ -296,16 +297,14 @@ JNIEXPORT jboolean JNICALL Java_org_godotengine_godot_GodotLib_step(JNIEnv *env,
 
 	return should_swap_buffers;
 }
-
-void touch_preprocessing(JNIEnv *env, jclass clazz, jint input_device, jint ev, jint pointer, jint pointer_count, jfloatArray positions, jint buttons_mask, jfloat vertical_factor, jfloat horizontal_factor, jfloat pressure) {
-	if (step.get() <= 0)
 // Called on the UI thread
-JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_dispatchMouseEvent(JNIEnv *env, jclass clazz, jint p_event_type, jint p_button_mask, jfloat p_x, jfloat p_y, jfloat p_delta_x, jfloat p_delta_y, jboolean p_double_click, jboolean p_source_mouse_relative) {
+JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_dispatchMouseEvent(JNIEnv *env, jclass clazz, jint p_event_type, jint p_button_mask, jfloat p_x, jfloat p_y, jfloat p_delta_x, jfloat p_delta_y, jboolean p_double_click, jboolean p_source_mouse_relative, jfloat p_pressure) {
+	print_line("HI FROM JAVA MOUSE DISPATCH" + String::num(p_pressure));
 	if (step.get() <= 0) {
 		return;
 	}
 
-	input_handler->process_mouse_event(p_event_type, p_button_mask, Point2(p_x, p_y), Vector2(p_delta_x, p_delta_y), p_double_click, p_source_mouse_relative);
+	input_handler->process_mouse_event(p_event_type, p_button_mask, Point2(p_x, p_y), Vector2(p_delta_x, p_delta_y), p_double_click, p_source_mouse_relative, p_pressure);
 }
 
 // Called on the UI thread
@@ -313,6 +312,7 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_dispatchTouchEvent(JN
 	if (step.get() <= 0) {
 		return;
 	}
+	print_line("HI FROM JAVA TOUCH" + String::num(pointer_count));
 	Vector<AndroidInputHandler::TouchPos> points;
 	for (int i = 0; i < pointer_count; i++) {
 		jfloat p[3];
@@ -323,12 +323,7 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_dispatchTouchEvent(JN
 		points.push_back(tp);
 	}
 
-
-	if ((input_device & AINPUT_SOURCE_MOUSE) == AINPUT_SOURCE_MOUSE || (input_device & AINPUT_SOURCE_STYLUS) == AINPUT_SOURCE_STYLUS) {
-		input_handler->process_mouse_event(ev, buttons_mask, points[0].pos, vertical_factor, horizontal_factor, pressure);
-	} else {
-		input_handler->process_touch_event(ev, pointer, points, p_double_tap);
-	}
+	input_handler->process_touch_event(ev, pointer, points, p_double_tap);
 }
 
 // Called on the UI thread

@@ -115,7 +115,8 @@ internal class GodotGestureHandler : SimpleOnGestureListener(), OnScaleGestureLi
 				0f,
 				0f,
 				false,
-				true
+				true,
+				0f,
 			)
 		}
 		pointerCaptureInProgress = hasCapture
@@ -157,7 +158,8 @@ internal class GodotGestureHandler : SimpleOnGestureListener(), OnScaleGestureLi
 					0f,
 					0f,
 					false,
-					sourceMouseRelative
+					sourceMouseRelative,
+					event.pressure,
 				)
 			} else {
 				GodotInputHandler.handleTouchEvent(event)
@@ -186,7 +188,8 @@ internal class GodotGestureHandler : SimpleOnGestureListener(), OnScaleGestureLi
 				0f,
 				0f,
 				false,
-				sourceMouseRelative
+				sourceMouseRelative,
+				event.pressure
 			)
 			return true
 		}

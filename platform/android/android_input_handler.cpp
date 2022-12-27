@@ -34,6 +34,8 @@
 
 #include "core/os/os.h"
 
+#include <iostream>
+
 void AndroidInputHandler::process_joy_event(const JoypadEvent &p_event) {
 	switch (p_event.type) {
 		case JOY_EVENT_BUTTON:
@@ -266,27 +268,31 @@ void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_an
 			mouse_event_info.pos = p_event_pos;
 			_parse_mouse_event_info(event_buttons_mask, true, p_double_click, p_source_mouse_relative);
 		} break;
+	};
+}
 
 
 
-void AndroidInputHandler::process_mouse_event(int event_action, int event_android_buttons_mask, Point2 event_pos, float event_vertical_factor, float event_horizontal_factor, float pressure) {
-	int event_buttons_mask = _android_button_mask_to_godot_button_mask(event_android_buttons_mask);
-	switch (event_action) {
+void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_android_buttons_mask, Point2 p_event_pos, Vector2 p_delta, bool p_double_click, bool p_source_mouse_relative, float p_pressure) {
+	std::cout << "process_mouse_event" << p_pressure << std::end;
+	
+	int event_buttons_mask = _android_button_mask_to_godot_button_mask(p_event_android_buttons_mask);
+	switch (p_event_action) {
 		case AMOTION_EVENT_ACTION_BUTTON_PRESS:
 		case AMOTION_EVENT_ACTION_BUTTON_RELEASE: {
 			Ref<InputEventMouseButton> ev;
 			ev.instance();
 			_set_key_modifier_state(ev);
-			ev->set_position(event_pos);
-			ev->set_global_position(event_pos);
-			ev->set_pressed(event_action == AMOTION_EVENT_ACTION_BUTTON_PRESS);
+			ev->set_position(p_event_pos);
+			ev->set_global_position(p_event_pos);
+			ev->set_pressed(p_event_action == AMOTION_EVENT_ACTION_BUTTON_PRESS);
 			int changed_button_mask = buttons_state ^ event_buttons_mask;
 			buttons_state = event_buttons_mask;
 			ev->set_button_index(_button_index_from_mask(changed_button_mask));
 			ev->set_button_mask(event_buttons_mask);
-			ev->set_pressure(pressure);
+			ev->set_pressure(p_pressure);
 			input->parse_input_event(ev);
-			hover_prev_pos = event_pos;
+			hover_prev_pos = p_event_pos;
 		} break;
 
 		case AMOTION_EVENT_ACTION_MOVE: {
@@ -309,7 +315,7 @@ void AndroidInputHandler::process_mouse_event(int event_action, int event_androi
 				hover_prev_pos = p_event_pos;
 			}
 			ev->set_button_mask(event_buttons_mask);
-			ev->set_pressure(pressure);
+			ev->set_pressure(p_pressure);
 			input->parse_input_event(ev);
 		} break;
 

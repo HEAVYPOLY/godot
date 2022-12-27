@@ -437,11 +437,12 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 	}
 
 	static boolean handleMotionEvent(final MotionEvent event) {
-		if (isMouseEvent(event)) {
+		// if (isMouseEvent(event)) {
+			System.out.println("handleMotionEvent isMouseEvent true");
 			return handleMouseEvent(event);
-		}
+		// }
 
-		return handleTouchEvent(event);
+		// return handleTouchEvent(event);
 	}
 
 	static boolean handleMotionEvent(int eventSource, int eventAction, int buttonsMask, float x, float y) {
@@ -454,7 +455,9 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 
 	static boolean handleMotionEvent(int eventSource, int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, boolean doubleTap) {
 		if (isMouseEvent(eventSource)) {
-			return handleMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleTap, false);
+			System.out.println("handleMotionEvent isMouseEvent erf");
+
+			return handleMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleTap, false, 0.5f);
 		}
 
 		return handleTouchEvent(eventAction, x, y, doubleTap);
@@ -468,25 +471,57 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 
 		final float verticalFactor = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
 		final float horizontalFactor = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
+		final float pressure = event.getPressure();
 		boolean sourceMouseRelative = false;
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 			sourceMouseRelative = event.isFromSource(InputDevice.SOURCE_MOUSE_RELATIVE);
 		}
-		return handleMouseEvent(eventAction, buttonsMask, x, y, horizontalFactor, verticalFactor, false, sourceMouseRelative);
+		System.out.println("MotionEvent naked "+pressure);
+
+		return handleMouseEvent(eventAction, buttonsMask, x, y, horizontalFactor, verticalFactor, false, sourceMouseRelative, pressure);
 	}
 
 	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y) {
-		return handleMouseEvent(eventAction, buttonsMask, x, y, 0, 0, false, false);
+		return handleMouseEvent(eventAction, buttonsMask, x, y, 0, 0, false, false, 1f);
+	}
+	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y, float pressure) {
+		return handleMouseEvent(eventAction, buttonsMask, x, y, 0, 0, false, false, pressure);
 	}
 
 	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y, boolean doubleClick) {
-		return handleMouseEvent(eventAction, buttonsMask, x, y, 0, 0, doubleClick, false);
+		return handleMouseEvent(eventAction, buttonsMask, x, y, 0, 0, doubleClick, false, 1f);
 	}
 
-	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, boolean doubleClick, boolean sourceMouseRelative) {
+	// static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, boolean sourceMouseRelative, float pressure) {
+	// 	// System.out.println("HandleMouseEvent"+pressure);
+	// 	switch (eventAction) {
+	// 		case MotionEvent.ACTION_CANCEL:
+	// 		case MotionEvent.ACTION_UP:
+	// 			// Zero-up the button state
+	// 			buttonsMask = 0;
+	// 			// FALL THROUGH
+	// 		case MotionEvent.ACTION_DOWN:
+	// 		case MotionEvent.ACTION_HOVER_ENTER:
+	// 		case MotionEvent.ACTION_HOVER_EXIT:
+	// 		case MotionEvent.ACTION_HOVER_MOVE:
+	// 		case MotionEvent.ACTION_MOVE:
+	// 		case SPEN_ACTION_MOVE:
+	// 		case MotionEvent.ACTION_SCROLL: {
+	// 			System.out.println("Before dispatchMouseEvent "+pressure);
+	// 			GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, pressure);
+	// 			return true;
+	// 		}
+			
+	// 	}
+	// 	return false;
+	// }	
+	
+	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, boolean doubleClick, boolean sourceMouseRelative, float pressure) {
 		// We don't handle ACTION_BUTTON_PRESS and ACTION_BUTTON_RELEASE events as they typically
 		// follow ACTION_DOWN and ACTION_UP events. As such, handling them would result in duplicate
 		// stream of events to the engine.
+
+		// System.out.println("HandleMouseEvent"+pressure);
 		switch (eventAction) {
 			case MotionEvent.ACTION_CANCEL:
 			case MotionEvent.ACTION_UP:
@@ -498,15 +533,33 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 			case MotionEvent.ACTION_HOVER_EXIT:
 			case MotionEvent.ACTION_HOVER_MOVE:
 			case MotionEvent.ACTION_MOVE:
+			case SPEN_ACTION_MOVE:
 			case MotionEvent.ACTION_SCROLL: {
-				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative);
+				System.out.println("Before dispatchMouseEvent "+pressure);
+				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, pressure);
 				return true;
 			}
+			
 		}
 		return false;
 	}
 
+	// static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, boolean doubleClick, boolean sourceMouseRelative, float pressure) {
+	// 	switch (eventAction) {
+	// 		case MotionEvent.ACTION_UP:
+	// 			buttonsMask = 0;
+	// 		case MotionEvent.ACTION_DOWN:
+	// 		case MotionEvent.ACTION_MOVE: {
+	// 			GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, pressure);
+	// 			return true;
+
+	// 		}
+	// 	}
+	// 	return false;
+	// }
+
 	static boolean handleTouchEvent(final MotionEvent event) {
+		System.out.println("handleTouchEvent");
 		final int pointerCount = event.getPointerCount();
 		if (pointerCount == 0) {
 			return true;
