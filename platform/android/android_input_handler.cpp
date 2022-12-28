@@ -125,7 +125,6 @@ void AndroidInputHandler::_release_all_touch() {
 }
 
 void AndroidInputHandler::process_touch_event(int p_event, int p_pointer, const Vector<TouchPos> &p_points, bool p_double_tap) {
-	print_line("CPP Touch ");
 
 	switch (p_event) {
 		case AMOTION_EVENT_ACTION_DOWN: { //gesture begin
@@ -182,14 +181,12 @@ void AndroidInputHandler::process_touch_event(int p_event, int p_pointer, const 
 				if (p_points[i].id == p_pointer) {
 					TouchPos tp = p_points[i];
 					touch.push_back(tp);
-
 					Ref<InputEventScreenTouch> ev;
 					ev.instance();
 					ev->set_index(tp.id);
 					ev->set_pressed(true);
 					ev->set_position(tp.pos);
 					input->parse_input_event(ev);
-
 					break;
 				}
 			}
@@ -245,19 +242,16 @@ void AndroidInputHandler::_release_mouse_event_info(bool p_source_mouse_relative
 	mouse_event_info.valid = false;
 }
 
-
 void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_android_buttons_mask, Point2 p_event_pos, Vector2 p_delta, bool p_double_click, bool p_source_mouse_relative, float p_pressure) {
 	int event_buttons_mask = _android_button_mask_to_godot_button_mask(p_event_android_buttons_mask);
 	// print_line("CPP MOUSE ID " + itos(p_event_action) +  " BUTTON MASK = " + itos(event_buttons_mask) + " PRESSURE = " + itos(p_pressure * 100) );
 	switch (p_event_action) {
-		// case GodotInputHandler.SPEN_ACTION_DOWN:
-		// case GodotInputHandler.SPEN_ACTION_UP:
 		case AMOTION_EVENT_ACTION_DOWN:
 		case AMOTION_EVENT_ACTION_UP:
 		case AMOTION_EVENT_ACTION_POINTER_UP:
 		case AMOTION_EVENT_ACTION_BUTTON_PRESS:
 		case AMOTION_EVENT_ACTION_BUTTON_RELEASE: {
-			print_line("CPP MOUSE BUTTON! " + itos(p_event_action) + " PRESSURE " + itos(p_pressure * 100) + " PRESSED " + itos(p_event_action == AMOTION_EVENT_ACTION_BUTTON_PRESS));
+			// print_line("CPP MOUSE BUTTON! " + itos(p_event_action) + " PRESSURE " + itos(p_pressure * 100) + " PRESSED " + itos(p_event_action == AMOTION_EVENT_ACTION_BUTTON_PRESS));
 			Ref<InputEventMouseButton> ev;
 			ev.instance();
 			_set_key_modifier_state(ev);
@@ -278,7 +272,7 @@ void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_an
 			// 	print_line("CPP MOUSE EVENT INVALID");
 			// 	return;
 			// }
-			print_line("CPP MOUSE MOVE!");
+			// print_line("CPP MOUSE MOVE!");
 			Ref<InputEventMouseMotion> ev;
 			ev.instance();
 			_set_key_modifier_state(ev);
@@ -397,3 +391,4 @@ int AndroidInputHandler::_android_button_mask_to_godot_button_mask(int android_b
 void AndroidInputHandler::joy_connection_changed(int p_device, bool p_connected, String p_name) {
 	input->joy_connection_changed(p_device, p_connected, p_name, "");
 }
+

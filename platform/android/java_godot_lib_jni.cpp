@@ -312,7 +312,7 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_dispatchTouchEvent(JN
 	if (step.get() <= 0) {
 		return;
 	}
-	print_line("HI FROM JAVA TOUCH " + String::num(pointer_count));
+	// print_line("HI FROM JAVA TOUCH " + String::num(pointer_count));
 	Vector<AndroidInputHandler::TouchPos> points;
 	for (int i = 0; i < pointer_count; i++) {
 		jfloat p[3];

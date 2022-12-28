@@ -532,7 +532,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 	}
 
 	static boolean handleTouchEvent(final MotionEvent event) {
-		System.out.println("handleTouchEvent");
+		// System.out.println("handleTouchEvent");
 		final int pointerCount = event.getPointerCount();
 		if (pointerCount == 0) {
 			return true;
