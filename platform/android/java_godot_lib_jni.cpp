@@ -302,7 +302,7 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_dispatchMouseEvent(JN
 	if (step.get() <= 0) {
 		return;
 	}
-	print_line("HI FROM JAVA MOUSE DISPATCH! TYPE = " + String::num(p_event_type) + " EVENT TYPE = " +  String::num(p_event_type) + " PRESSURE = " + String::num(p_pressure));
+	// print_line("HI FROM JAVA MOUSE DISPATCH! TYPE = " + String::num(p_event_type) + " EVENT TYPE = " +  String::num(p_event_type) + " PRESSURE = " + String::num(p_pressure));
 
 	input_handler->process_mouse_event(p_event_type, p_button_mask, Point2(p_x, p_y), Vector2(p_delta_x, p_delta_y), p_double_click, p_source_mouse_relative, p_pressure);
 }

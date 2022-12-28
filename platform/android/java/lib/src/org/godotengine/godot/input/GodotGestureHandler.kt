@@ -62,7 +62,7 @@ internal class GodotGestureHandler : SimpleOnGestureListener(), OnScaleGestureLi
 	private var pointerCaptureInProgress = false
 
 	override fun onDown(event: MotionEvent): Boolean {
-		GodotInputHandler.handleMotionEvent(event.source, MotionEvent.ACTION_DOWN, event.buttonState, event.x, event.y, nextDownIsDoubleTap)
+		GodotInputHandler.handleMotionEvent(event.source, MotionEvent.ACTION_DOWN, event.buttonState, event.x, event.y, nextDownIsDoubleTap, event.pressure)
 		nextDownIsDoubleTap = false
 		return true
 	}
