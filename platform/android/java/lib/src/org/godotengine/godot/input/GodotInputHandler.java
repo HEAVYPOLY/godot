@@ -513,12 +513,14 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 				// Zero-up the button state
 				buttonsMask = 0;
 				// FALL THROUGH
-			case SPEN_ACTION_DOWN:
-			case MotionEvent.ACTION_BUTTON_PRESS:
-			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_HOVER_ENTER:
 			case MotionEvent.ACTION_HOVER_EXIT:
 			case MotionEvent.ACTION_HOVER_MOVE:
+				System.out.println("handlemousevent hover");
+				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, 1f);
+			case SPEN_ACTION_DOWN:
+			case MotionEvent.ACTION_BUTTON_PRESS:
+			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_MOVE:
 			case SPEN_ACTION_MOVE:
 			case MotionEvent.ACTION_SCROLL: {

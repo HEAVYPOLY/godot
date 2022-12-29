@@ -250,6 +250,7 @@ void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_an
 		case AMOTION_EVENT_ACTION_UP:
 		case AMOTION_EVENT_ACTION_POINTER_UP:
 		case AMOTION_EVENT_ACTION_BUTTON_PRESS:
+		// case AMOTION_EVENT_ACTION_HOVER_ENTER:
 		case AMOTION_EVENT_ACTION_BUTTON_RELEASE: {
 			// print_line("CPP MOUSE BUTTON! " + itos(p_event_action) + " PRESSURE " + itos(p_pressure * 100) + " PRESSED " + itos(p_event_action == AMOTION_EVENT_ACTION_BUTTON_PRESS));
 			Ref<InputEventMouseButton> ev;
