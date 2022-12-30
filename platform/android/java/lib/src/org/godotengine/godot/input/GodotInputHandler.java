@@ -468,7 +468,13 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 
 		return handleTouchEvent(eventAction, x, y, doubleTap);
 	}
+	static boolean handleMotionEvent(int eventSource, int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, boolean doubleTap, float pressure, float tiltX, float tiltY) {
+		if (isMouseEvent(eventSource)) {
+			return handleMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleTap, false, pressure, tiltX, tiltY);
+		}
 
+		return handleTouchEvent(eventAction, x, y, doubleTap);
+	}
 	static boolean handleMouseEvent(final MotionEvent event) {
 		final int eventAction = event.getActionMasked();
 		final float x = event.getX();
@@ -478,13 +484,15 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		final float verticalFactor = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
 		final float horizontalFactor = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
 		final float pressure = event.getPressure();
+		final float tilt = event.getAxisValue(MotionEvent.AXIS_TILT);
+		final float orientation = event.getOrientation();
 		boolean sourceMouseRelative = false;
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 			sourceMouseRelative = event.isFromSource(InputDevice.SOURCE_MOUSE_RELATIVE);
 		}
 		// System.out.println("MotionEvent naked pressure "+ pressure + "ACTION " + eventAction);
 
-		return handleMouseEvent(eventAction, buttonsMask, x, y, horizontalFactor, verticalFactor, false, sourceMouseRelative, pressure);
+		return handleMouseEvent(eventAction, buttonsMask, x, y, horizontalFactor, verticalFactor, false, sourceMouseRelative, pressure, orientation, tilt);
 	}
 
 	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y) {
@@ -516,22 +524,50 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 			case MotionEvent.ACTION_HOVER_ENTER:
 			case MotionEvent.ACTION_HOVER_EXIT:
 			case MotionEvent.ACTION_HOVER_MOVE:
-				System.out.println("handlemousevent hover");
-				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, 1f);
+				System.out.println("handlemousevent hover no tilt");
+				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, 1f, 0f, 0f);
 			case SPEN_ACTION_DOWN:
 			case MotionEvent.ACTION_BUTTON_PRESS:
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_MOVE:
 			case SPEN_ACTION_MOVE:
 			case MotionEvent.ACTION_SCROLL: {
-				// System.out.println("Before dispatchMouseEvent "+pressure);
-				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, pressure);
+				System.out.println("handle mouse "+pressure);
+				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, pressure, 0f, 0f);
 				return true;
 			}
-			
 		}
 		return false;
 	}
+	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, boolean doubleClick, boolean sourceMouseRelative, float pressure, float tiltX, float tiltY) {
+		switch (eventAction) {
+			case MotionEvent.ACTION_CANCEL:
+			case SPEN_ACTION_UP:
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_BUTTON_RELEASE:
+				// Zero-up the button state
+				buttonsMask = 0;
+				// FALL THROUGH
+			case MotionEvent.ACTION_HOVER_ENTER:
+			case MotionEvent.ACTION_HOVER_EXIT:
+			case MotionEvent.ACTION_HOVER_MOVE:
+				System.out.println("handlemousevent hover with tilt");
+				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, 1f, 0f, 0f);
+			case SPEN_ACTION_DOWN:
+			case MotionEvent.ACTION_BUTTON_PRESS:
+			case MotionEvent.ACTION_DOWN:
+			case MotionEvent.ACTION_MOVE:
+			case SPEN_ACTION_MOVE:
+			case MotionEvent.ACTION_SCROLL: {
+				System.out.println("handlemouseevent tilt "+ tiltX);
+				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, pressure, tiltX, tiltY);
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 
 	static boolean handleTouchEvent(final MotionEvent event) {
 		// System.out.println("handleTouchEvent");

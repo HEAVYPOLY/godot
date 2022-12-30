@@ -189,7 +189,10 @@ internal class GodotGestureHandler : SimpleOnGestureListener(), OnScaleGestureLi
 				0f,
 				false,
 				sourceMouseRelative,
-				event.pressure
+				event.pressure,
+				event.orientation,
+				event.orientation,
+				// event.tilt,
 			)
 			return true
 		}

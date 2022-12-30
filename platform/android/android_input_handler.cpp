@@ -242,8 +242,10 @@ void AndroidInputHandler::_release_mouse_event_info(bool p_source_mouse_relative
 	mouse_event_info.valid = false;
 }
 
-void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_android_buttons_mask, Point2 p_event_pos, Vector2 p_delta, bool p_double_click, bool p_source_mouse_relative, float p_pressure) {
+void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_android_buttons_mask, Point2 p_event_pos, Vector2 p_delta, bool p_double_click, bool p_source_mouse_relative, float p_pressure, float orientation, float tilt) {
 	int event_buttons_mask = _android_button_mask_to_godot_button_mask(p_event_android_buttons_mask);
+	float tilt_x = sin(orientation) * tilt;
+	float tilt_y = cos(orientation) * tilt;
 	// print_line("CPP MOUSE ID " + itos(p_event_action) +  " BUTTON MASK = " + itos(event_buttons_mask) + " PRESSURE = " + itos(p_pressure * 100) );
 	switch (p_event_action) {
 		case AMOTION_EVENT_ACTION_DOWN:
@@ -290,6 +292,8 @@ void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_an
 			}
 			ev->set_button_mask(event_buttons_mask);
 			ev->set_pressure(p_pressure);
+			ev->set_tilt(Vector2(tilt_x, tilt_y));
+
 			input->parse_input_event(ev);
 		} break;
 
