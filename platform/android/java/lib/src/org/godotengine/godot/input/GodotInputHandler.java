@@ -524,7 +524,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 			case MotionEvent.ACTION_HOVER_ENTER:
 			case MotionEvent.ACTION_HOVER_EXIT:
 			case MotionEvent.ACTION_HOVER_MOVE:
-				System.out.println("handlemousevent hover no tilt");
+				// System.out.println("handlemousevent hover no tilt");
 				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, 1f, 0f, 0f);
 			case SPEN_ACTION_DOWN:
 			case MotionEvent.ACTION_BUTTON_PRESS:
@@ -532,7 +532,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 			case MotionEvent.ACTION_MOVE:
 			case SPEN_ACTION_MOVE:
 			case MotionEvent.ACTION_SCROLL: {
-				System.out.println("handle mouse "+pressure);
+				// System.out.println("handle mouse "+pressure);
 				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, pressure, 0f, 0f);
 				return true;
 			}
@@ -551,7 +551,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 			case MotionEvent.ACTION_HOVER_ENTER:
 			case MotionEvent.ACTION_HOVER_EXIT:
 			case MotionEvent.ACTION_HOVER_MOVE:
-				System.out.println("handlemousevent hover with tilt");
+				// System.out.println("handlemousevent hover with tilt");
 				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, 1f, 0f, 0f);
 			case SPEN_ACTION_DOWN:
 			case MotionEvent.ACTION_BUTTON_PRESS:
@@ -559,7 +559,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 			case MotionEvent.ACTION_MOVE:
 			case SPEN_ACTION_MOVE:
 			case MotionEvent.ACTION_SCROLL: {
-				System.out.println("handlemouseevent tilt "+ tiltX);
+				// System.out.println("handlemouseevent tilt "+ tiltX);
 				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, pressure, tiltX, tiltY);
 				return true;
 			}
