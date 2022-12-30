@@ -271,10 +271,16 @@ void OSIPhone::pencil_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_
 	perform_event(ev);
 };
 
-void OSIPhone::pencil_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p_y, float p_force) {
+void OSIPhone::pencil_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p_y, float p_force, float p_tilt_x, float p_tilt_y, float altitude_angle) {
+	// float altitudeRadius = (1.0 - altitaltitude_angleudeAngle / ( PI / 2.0)) * radius
 	Ref<InputEventMouseMotion> ev;
 	ev.instance();
 	ev->set_pressure(p_force);
+	// ev->set_tilt(Vector2(p_tilt_x , p_tilt_y));
+	// ev->set_tilt(Vector2((p_tilt_x + 1.0), -(p_tilt_y + 1.0)));
+	// ev->set_tilt(Vector2(-(p_tilt_y), (p_tilt_x)));
+	ev->set_tilt(Vector2((p_tilt_x), -(p_tilt_y)));
+	// ev->set_tilt(Vector2(1.0, 1.0));
 	ev->set_position(Vector2(p_x, p_y));
 	ev->set_global_position(Vector2(p_x, p_y));
 	ev->set_relative(Vector2(p_x - p_prev_x, p_y - p_prev_y));
