@@ -279,7 +279,8 @@ void OSIPhone::pencil_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p
 	// ev->set_tilt(Vector2(p_tilt_x , p_tilt_y));
 	// ev->set_tilt(Vector2((p_tilt_x + 1.0), -(p_tilt_y + 1.0)));
 	// ev->set_tilt(Vector2(-(p_tilt_y), (p_tilt_x)));
-	ev->set_tilt(Vector2((p_tilt_x), -(p_tilt_y)));
+	// ev->set_tilt(Vector2((p_tilt_x) * altitude_angle, -(p_tilt_y) * altitude_angle));
+	ev->set_tilt(Vector2(-(p_tilt_x) * altitude_angle, (p_tilt_y) * altitude_angle));
 	// ev->set_tilt(Vector2(1.0, 1.0));
 	ev->set_position(Vector2(p_x, p_y));
 	ev->set_global_position(Vector2(p_x, p_y));
