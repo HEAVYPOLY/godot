@@ -522,11 +522,11 @@ LRESULT OS_Windows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 					double azim = (packet.pkOrientation.orAzimuth / 10.0f) * (Math_PI / 180);
 					double alt = Math::tan((Math::abs(packet.pkOrientation.orAltitude / 10.0f)) * (Math_PI / 180));
 
-					if (tilt_supported) {
-						last_tilt = Vector2(Math::atan(Math::sin(azim) / alt), Math::atan(Math::cos(azim) / alt));
-					} else {
-						last_tilt = Vector2();
-					}
+					// if (tilt_supported) {
+					last_tilt = Vector2(Math::atan(Math::cos(azim) / alt), Math::atan(Math::sin(azim) / alt));
+					// } else {
+						// last_tilt = Vector2();
+					// }
 
 					last_pen_inverted = packet.pkStatus & TPS_INVERT;
 
