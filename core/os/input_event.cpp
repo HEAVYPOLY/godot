@@ -430,6 +430,14 @@ float InputEventMouseButton::get_factor() const {
 	return factor;
 }
 
+// void InputEventMouseButton::set_tilt(const Vector2 &p_tilt) {
+// 	tilt = p_tilt;
+// }
+
+// Vector2 InputEventMouseButton::get_tilt() const {
+// 	return tilt;
+// }
+
 void InputEventMouseButton::set_pressure(float p_pressure) {
 	pressure = p_pressure;
 }
@@ -477,6 +485,7 @@ Ref<InputEvent> InputEventMouseButton::xformed_by(const Transform2D &p_xform, co
 	mb->set_pressed(pressed);
 	mb->set_doubleclick(doubleclick);
 	mb->set_factor(factor);
+	// mb->set_tilt(tilt);
 	mb->set_pressure(pressure);
 	mb->set_button_index(button_index);
 
@@ -563,6 +572,9 @@ String InputEventMouseButton::as_text() const {
 }
 
 void InputEventMouseButton::_bind_methods() {
+	// ClassDB::bind_method(D_METHOD("set_tilt", "tilt"), &InputEventMouseButton::set_tilt);
+	// ClassDB::bind_method(D_METHOD("get_tilt"), &InputEventMouseButton::get_tilt);
+
 	ClassDB::bind_method(D_METHOD("set_factor", "factor"), &InputEventMouseButton::set_factor);
 	ClassDB::bind_method(D_METHOD("get_factor"), &InputEventMouseButton::get_factor);
 
@@ -573,12 +585,13 @@ void InputEventMouseButton::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_button_index"), &InputEventMouseButton::get_button_index);
 
 	ClassDB::bind_method(D_METHOD("set_pressed", "pressed"), &InputEventMouseButton::set_pressed);
-	//	ClassDB::bind_method(D_METHOD("is_pressed"), &InputEventMouseButton::is_pressed);
+	ClassDB::bind_method(D_METHOD("is_pressed"), &InputEventMouseButton::is_pressed);
 
 	ClassDB::bind_method(D_METHOD("set_doubleclick", "doubleclick"), &InputEventMouseButton::set_doubleclick);
 	ClassDB::bind_method(D_METHOD("is_doubleclick"), &InputEventMouseButton::is_doubleclick);
 
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "factor"), "set_factor", "get_factor");
+	// ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "tilt"), "set_tilt", "get_tilt");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "pressure"), "set_pressure", "get_pressure");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "button_index"), "set_button_index", "get_button_index");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "pressed"), "set_pressed", "is_pressed");
@@ -587,6 +600,7 @@ void InputEventMouseButton::_bind_methods() {
 
 InputEventMouseButton::InputEventMouseButton() {
 	factor = 1;
+	// tilt = Vector2(0, 0);
 	pressure = 1;
 	button_index = 0;
 	pressed = false;
@@ -979,7 +993,7 @@ void InputEventScreenTouch::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_position"), &InputEventScreenTouch::get_position);
 
 	ClassDB::bind_method(D_METHOD("set_pressed", "pressed"), &InputEventScreenTouch::set_pressed);
-	//ClassDB::bind_method(D_METHOD("is_pressed"),&InputEventScreenTouch::is_pressed);
+	ClassDB::bind_method(D_METHOD("is_pressed"),&InputEventScreenTouch::is_pressed);
 
 	ClassDB::bind_method(D_METHOD("set_double_tap", "double_tap"), &InputEventScreenTouch::set_double_tap);
 	ClassDB::bind_method(D_METHOD("is_double_tap"), &InputEventScreenTouch::is_double_tap);

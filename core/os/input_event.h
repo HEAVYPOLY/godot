@@ -351,6 +351,7 @@ class InputEventMouseButton : public InputEventMouse {
 
 	float factor;
 	float pressure;
+	// Vector2 tilt;
 	int button_index;
 	bool pressed; //otherwise released
 	bool doubleclick; //last even less than doubleclick time
@@ -370,6 +371,9 @@ public:
 
 	void set_pressed(bool p_pressed);
 	virtual bool is_pressed() const;
+
+	void set_tilt(const Vector2 &p_tilt);
+	Vector2 get_tilt() const;
 
 	void set_doubleclick(bool p_doubleclick);
 	bool is_doubleclick() const;

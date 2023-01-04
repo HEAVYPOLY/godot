@@ -59,6 +59,9 @@
 #include <sys/sysctl.h>
 #import <sys/utsname.h>
 
+#include <iostream>
+
+using namespace std;
 extern int gl_view_base_fb; // from gl_view.mm
 extern bool gles3_available; // from gl_view.mm
 
@@ -272,10 +275,14 @@ void OSIPhone::pencil_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_
 };
 
 void OSIPhone::pencil_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p_y, float p_force, float p_tilt_x, float p_tilt_y, float altitude_angle) {
-	// float altitudeRadius = (1.0 - altitaltitude_angleudeAngle / ( PI / 2.0)) * radius
+	// printf("iOS pencil_drag ID = %u  ALT ANGLE = %f", p_idx, altitude_angle);
+	// cout << "iOS pencil_drag ID = " << p_idx << "\n ALT ANGLE = " << altitude_angle << endl;
+	// NSLog(@"NSLOG PENCIL DRAG");
 	Ref<InputEventMouseMotion> ev;
+
 	ev.instance();
 	ev->set_pressure(p_force);
+	// float altitudeRadius = (1.0 - altitaltitude_angleudeAngle / ( PI / 2.0)) * radius
 	// ev->set_tilt(Vector2(p_tilt_x , p_tilt_y));
 	// ev->set_tilt(Vector2((p_tilt_x + 1.0), -(p_tilt_y + 1.0)));
 	// ev->set_tilt(Vector2(-(p_tilt_y), (p_tilt_x)));
@@ -293,9 +300,13 @@ void OSIPhone::pencil_cancelled(int p_idx) {
 }
 
 void OSIPhone::touch_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick) {
-	if (GLOBAL_DEF("debug/disable_touch", false)) {
-		return;
-	}
+	// if (GLOBAL_DEF("debug/disable_touch", false)) {
+	// 	return;
+	// }
+	// printf("Unable to play %s using the native player as it resides in a .pck file\n", p_path.utf8().get_data());
+	// cout << "iOS touch_press ID = " << p_idx << " PRESSED = " << p_pressed << endl;
+	// print_line("touch press hrm");
+	printf("iOS touch_press ID = %u  PRESSED = %u \n", p_idx, p_pressed);
 
 	Ref<InputEventScreenTouch> ev;
 	ev.instance();
@@ -326,6 +337,8 @@ void OSIPhone::perform_event(const Ref<InputEvent> &p_event) {
 }
 
 void OSIPhone::touches_cancelled(int p_idx) {
+	printf("TOUCHES CANCELLED");
+
 	touch_press(p_idx, -1, -1, false, false);
 }
 
