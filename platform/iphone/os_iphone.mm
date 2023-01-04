@@ -300,13 +300,13 @@ void OSIPhone::pencil_cancelled(int p_idx) {
 }
 
 void OSIPhone::touch_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick) {
-	// if (GLOBAL_DEF("debug/disable_touch", false)) {
-	// 	return;
-	// }
+	if (GLOBAL_DEF("debug/disable_touch", false)) {
+		return;
+	}
 	// printf("Unable to play %s using the native player as it resides in a .pck file\n", p_path.utf8().get_data());
 	// cout << "iOS touch_press ID = " << p_idx << " PRESSED = " << p_pressed << endl;
 	// print_line("touch press hrm");
-	printf("iOS touch_press ID = %u  PRESSED = %u \n", p_idx, p_pressed);
+	// printf("iOS touch_press ID = %u  PRESSED = %u \n", p_idx, p_pressed);
 
 	Ref<InputEventScreenTouch> ev;
 	ev.instance();
@@ -337,8 +337,6 @@ void OSIPhone::perform_event(const Ref<InputEvent> &p_event) {
 }
 
 void OSIPhone::touches_cancelled(int p_idx) {
-	printf("TOUCHES CANCELLED");
-
 	touch_press(p_idx, -1, -1, false, false);
 }
 

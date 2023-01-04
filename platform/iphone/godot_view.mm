@@ -341,8 +341,6 @@ static const int max_touches = 8;
 			int tid = [self getTouchIDForTouch:touch];
 			ERR_FAIL_COND(tid == -1);
 			CGPoint touchPoint = [touch locationInView:self];
-			printf(" BEGAN PENCIL? = %u ID = %u", (touch.type == UITouchTypeStylus), tid);
-
 			if (touch.type == UITouchTypeStylus) {
 				OSIPhone::get_singleton()->pencil_press(tid, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor, true, touch.tapCount > 1, touch.force);
 			} else {
@@ -382,12 +380,9 @@ static const int max_touches = 8;
 			ERR_FAIL_COND(tid == -1);
 			[self removeTouch:touch];
 			CGPoint touchPoint = [touch locationInView:self];
-			printf(" ENDED PENCIL? = %u ID = %u", (touch.type == UITouchTypeStylus), tid);
-
 			if (touch.type == UITouchTypeStylus) {
 				OSIPhone::get_singleton()->pencil_press(tid, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor, false, false, touch.force);
 			} else {
-				printf("\nRELEASE TOUCH!");
 				OSIPhone::get_singleton()->touch_press(tid, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor, false, false);
 			}
 		}
