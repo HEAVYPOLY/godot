@@ -45,6 +45,7 @@
 #include <emscripten.h>
 #include <png.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include "api/javascript_singleton.h"
 #include "dom_keys.inc"
@@ -55,6 +56,8 @@
 #define DOM_BUTTON_RIGHT 2
 #define DOM_BUTTON_XBUTTON1 3
 #define DOM_BUTTON_XBUTTON2 4
+
+using namespace std;
 
 // Quit
 void OS_JavaScript::request_quit_callback() {
@@ -642,6 +645,7 @@ void OS_JavaScript::touch_callback(int p_type, int p_count) {
 
 			Point2 &prev = os->touches[i];
 			ev->set_relative(ev->get_position() - prev);
+			printf("TOUCH DRAG REL:  %f,  %f  POS: %f, %f", ev->get_relative().x, ev->get_relative().y, ev->get_position().x, ev->get_position().y);
 			prev = ev->get_position();
 
 			os->input->parse_input_event(ev);

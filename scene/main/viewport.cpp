@@ -2014,7 +2014,7 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 			}
 
 			_gui_cancel_tooltip();
-		} else {
+		} else { //release mouse button
 			if (gui.drag_data.get_type() != Variant::NIL && mb->get_button_index() == BUTTON_LEFT) {
 				gui.drag_successful = false;
 				if (gui.mouse_over) {
@@ -2293,8 +2293,6 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 		OS::get_singleton()->set_cursor_shape((OS::CursorShape)cursor_shape);
 
 		if (over && over->can_process()) {
-			cout << "mouse drag over" << endl;
-
 			_gui_call_input(over, mm);
 		}
 
@@ -2345,13 +2343,43 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 				return;
 			}
 		} else if (touch_event->get_index() == 0 && gui.last_mouse_focus) {
-			if (gui.last_mouse_focus->can_process()) {
+
+
+
+
+			if (!gui.mouse_focus) {
+				//release event is only sent if a mouse focus (previously pressed button) exists
+				return;
+			}
+
+			// Size2 pos = mpos;
+
+			// mb = mb->xformed_by(Transform2D()); //make a copy
+			// mb->set_global_position(pos);
+			// pos = gui.focus_inv_xform.xform(pos);
+			// mb->set_position(pos);
+
+			Control *mouse_focus = gui.mouse_focus;
+
+			//disable mouse focus if needed before calling input, this makes popups on mouse press event work better, as the release will never be received otherwise
+			if (gui.mouse_focus_mask == 0) {
+				gui.mouse_focus = nullptr;
+			}
+			if (mouse_focus && mouse_focus->can_process()) {
 				touch_event = touch_event->xformed_by(Transform2D()); //make a copy
 				touch_event->set_position(gui.focus_inv_xform.xform(pos));
-
-				_gui_call_input(gui.last_mouse_focus, touch_event);
 				set_input_as_handled();
+				_gui_call_input(mouse_focus, touch_event);
 			}
+
+
+			
+			// if (gui.last_mouse_focus->can_process()) {
+			// 	touch_event = touch_event->xformed_by(Transform2D()); //make a copy
+			// 	touch_event->set_position(gui.focus_inv_xform.xform(pos));
+			// 	_gui_call_input(gui.last_mouse_focus, touch_event);
+			// 	set_input_as_handled();
+			// }
 			return;
 		}
 	}
@@ -2871,7 +2899,7 @@ void Viewport::_post_gui_grab_click_focus() {
 				mb.instance();
 
 				//send unclic
-
+				printf("send unclic");
 				mb->set_position(click);
 				mb->set_button_index(i + 1);
 				mb->set_pressed(false);
