@@ -2313,8 +2313,6 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 
 	if (touch_event.is_valid()) {
 		Size2 pos = touch_event->get_position();
-		gui.mouse_focus = _gui_find_control(pos);
-		gui.last_mouse_focus = gui.mouse_focus;
 
 		// if (!gui.mouse_focus) {
 		// 	gui.mouse_focus_mask = 0;
@@ -2323,6 +2321,8 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 		if (touch_event->is_pressed()) {
 			Control *over = _gui_find_control(pos);
 			if (over) {
+				gui.mouse_focus = _gui_find_control(pos);
+				gui.last_mouse_focus = gui.mouse_focus;
 				if (!gui.modal_stack.empty()) {
 					Control *top = gui.modal_stack.back()->get();
 					if (over != top && !top->is_a_parent_of(over)) {
@@ -2343,10 +2343,6 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 				return;
 			}
 		} else if (touch_event->get_index() == 0 && gui.last_mouse_focus) {
-
-
-
-
 			if (!gui.mouse_focus) {
 				//release event is only sent if a mouse focus (previously pressed button) exists
 				return;
@@ -2359,13 +2355,13 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 			// pos = gui.focus_inv_xform.xform(pos);
 			// mb->set_position(pos);
 
-			Control *mouse_focus = gui.mouse_focus;
+			// Control *mouse_focus = gui.mouse_focus;
 
 			//disable mouse focus if needed before calling input, this makes popups on mouse press event work better, as the release will never be received otherwise
-			if (gui.mouse_focus_mask == 0) {
-				gui.mouse_focus = nullptr;
-			}
-			if (mouse_focus && mouse_focus->can_process()) {
+			// if (gui.mouse_focus_mask == 0) {
+			// 	gui.mouse_focus = nullptr;
+			// }
+			if (gui.mouse_focus && gui.mouse_focus->can_process()) {
 				touch_event = touch_event->xformed_by(Transform2D()); //make a copy
 				touch_event->set_position(gui.focus_inv_xform.xform(pos));
 				set_input_as_handled();
