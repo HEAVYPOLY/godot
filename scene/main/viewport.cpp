@@ -53,6 +53,9 @@
 #include "scene/resources/mesh.h"
 #include "scene/scene_string_names.h"
 #include "servers/physics_2d_server.h"
+#include <iostream>
+
+using namespace std;
 
 void ViewportTexture::setup_local_to_scene() {
 	Node *local_scene = get_local_scene();
@@ -2290,6 +2293,8 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 		OS::get_singleton()->set_cursor_shape((OS::CursorShape)cursor_shape);
 
 		if (over && over->can_process()) {
+			cout << "mouse drag over" << endl;
+
 			_gui_call_input(over, mm);
 		}
 
@@ -2307,8 +2312,16 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 	}
 
 	Ref<InputEventScreenTouch> touch_event = p_event;
+
 	if (touch_event.is_valid()) {
 		Size2 pos = touch_event->get_position();
+		gui.mouse_focus = _gui_find_control(pos);
+		gui.last_mouse_focus = gui.mouse_focus;
+
+		// if (!gui.mouse_focus) {
+		// 	gui.mouse_focus_mask = 0;
+		// 	return;
+		// }
 		if (touch_event->is_pressed()) {
 			Control *over = _gui_find_control(pos);
 			if (over) {
@@ -2327,8 +2340,8 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 					}
 					touch_event->set_position(pos);
 					_gui_call_input(over, touch_event);
+					set_input_as_handled();
 				}
-				set_input_as_handled();
 				return;
 			}
 		} else if (touch_event->get_index() == 0 && gui.last_mouse_focus) {
@@ -2337,10 +2350,67 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 				touch_event->set_position(gui.focus_inv_xform.xform(pos));
 
 				_gui_call_input(gui.last_mouse_focus, touch_event);
+				set_input_as_handled();
 			}
-			set_input_as_handled();
 			return;
 		}
+	}
+
+	Ref<InputEventScreenDrag> drag_event = p_event;
+	if (drag_event.is_valid()) {
+		Control *over = gui.mouse_focus;
+		if (!over) {
+			over = _gui_find_control(drag_event->get_position());
+		}
+		if (over) {
+
+			if (!gui.modal_stack.empty()) {
+				Control *top = gui.modal_stack.back()->get();
+				if (over != top && !top->is_a_parent_of(over)) {
+					return;
+				}
+			}
+			if (over->can_process()) {
+				cout << "drag over" << endl;
+				Transform2D localizer = over->get_global_transform_with_canvas().affine_inverse();
+				Size2 pos = localizer.xform(drag_event->get_position());
+				Vector2 speed = localizer.basis_xform(drag_event->get_speed());
+				Vector2 rel = localizer.basis_xform(drag_event->get_relative());
+
+				drag_event = drag_event->xformed_by(Transform2D()); //make a copy
+
+				drag_event->set_speed(speed);
+				drag_event->set_relative(rel);
+				drag_event->set_position(pos);
+
+				_gui_call_input(over, drag_event);
+				set_input_as_handled();
+			}
+			return;
+		} 
+		// else {
+		// 	cout << "drag not over" << endl;
+		// 	Size2 pos = drag_event->get_position();
+		// 	Vector2 speed = drag_event->get_speed();
+		// 	Vector2 rel = drag_event->get_relative();
+		// 	cout << "after transforms" << endl;
+
+		// 	drag_event = drag_event->xformed_by(Transform2D()); //make a copy
+			
+		// 	drag_event->set_speed(speed);
+		// 	cout << "2" << endl;
+		// 	drag_event->set_relative(rel);
+		// 	drag_event->set_position(gui.focus_inv_xform.xform(pos));
+		// 	printf("pos: %f rel: %f speed: %f", pos.x, rel.x, speed.x);
+		// 	// cout << pos << endl;
+		// 	//no control, so send to viewport
+		// 	cout << "3" << endl;
+		// 	_gui_call_input(gui.last_mouse_focus, drag_event);
+		// 	set_input_as_handled();
+		// 	cout << "4" << endl;
+		// 	return;
+
+		// }
 	}
 
 	Ref<InputEventGesture> gesture_event = p_event;
@@ -2368,38 +2438,7 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 		}
 	}
 
-	Ref<InputEventScreenDrag> drag_event = p_event;
-	if (drag_event.is_valid()) {
-		Control *over = gui.mouse_focus;
-		if (!over) {
-			over = _gui_find_control(drag_event->get_position());
-		}
-		if (over) {
-			if (!gui.modal_stack.empty()) {
-				Control *top = gui.modal_stack.back()->get();
-				if (over != top && !top->is_a_parent_of(over)) {
-					return;
-				}
-			}
-			if (over->can_process()) {
-				Transform2D localizer = over->get_global_transform_with_canvas().affine_inverse();
-				Size2 pos = localizer.xform(drag_event->get_position());
-				Vector2 speed = localizer.basis_xform(drag_event->get_speed());
-				Vector2 rel = localizer.basis_xform(drag_event->get_relative());
 
-				drag_event = drag_event->xformed_by(Transform2D()); //make a copy
-
-				drag_event->set_speed(speed);
-				drag_event->set_relative(rel);
-				drag_event->set_position(pos);
-
-				_gui_call_input(over, drag_event);
-			}
-
-			set_input_as_handled();
-			return;
-		}
-	}
 
 	if (mm.is_null() && mb.is_null() && p_event->is_action_type()) {
 		if (gui.key_focus && !gui.key_focus->is_visible_in_tree()) {
