@@ -2365,7 +2365,7 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 				touch_event = touch_event->xformed_by(Transform2D()); //make a copy
 				touch_event->set_position(gui.focus_inv_xform.xform(pos));
 				set_input_as_handled();
-				_gui_call_input(mouse_focus, touch_event);
+				_gui_call_input(gui.mouse_focus, touch_event);
 			}
 
 
