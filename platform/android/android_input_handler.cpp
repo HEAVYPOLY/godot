@@ -37,7 +37,6 @@
 #include <iostream>
 
 #include <string>
-using namespace std;
 
 void AndroidInputHandler::process_joy_event(const JoypadEvent &p_event) {
 	switch (p_event.type) {
@@ -162,11 +161,11 @@ void AndroidInputHandler::process_touch_event(int p_event, int p_pointer, const 
 				if (touch[i].pos == p_points[idx].pos) {
 					continue; //no move unncesearily
 				}
+
 				Ref<InputEventScreenDrag> ev;
 				ev.instance();
 				ev->set_index(touch[i].id);
 				ev->set_position(p_points[idx].pos);
-				printf("touch move %f, %f     last point:%f,%f", p_points[idx].pos.x, p_points[idx].pos.y, touch[i].pos.x, touch[i].pos.y);
 				ev->set_relative(p_points[idx].pos - touch[i].pos);
 				input->parse_input_event(ev);
 				touch.write[i].pos = p_points[idx].pos;
