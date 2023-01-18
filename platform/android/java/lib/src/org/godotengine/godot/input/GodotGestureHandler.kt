@@ -91,12 +91,12 @@ internal class GodotGestureHandler : SimpleOnGestureListener(), OnScaleGestureLi
 		)
 
 		// Turn a context click into a single tap right mouse button click.
-		GodotInputHandler.handleMouseEvent(
-			MotionEvent.ACTION_DOWN,
-			MotionEvent.BUTTON_SECONDARY,
-			event.x,
-			event.y
-		)
+		// GodotInputHandler.handleMouseEvent(
+		// 	MotionEvent.ACTION_DOWN,
+		// 	MotionEvent.BUTTON_SECONDARY,
+		// 	event.x,
+		// 	event.y
+		// )
 		contextClickInProgress = true
 	}
 
