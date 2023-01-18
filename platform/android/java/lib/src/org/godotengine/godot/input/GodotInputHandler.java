@@ -200,9 +200,11 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		}
 
 		if (isMouseEvent(event)) {
-			return handleMouseEvent(event);
+			Log.v(TAG, String.format("onTouchEvent IS MOUSE!"));
+			// return handleMouseEvent(event);
 		}
 
+		Log.v(TAG, String.format("onTouchEvent forward to handleTouchEvent"));
 		return handleTouchEvent(event);
 	}
 
@@ -253,6 +255,8 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 				return true;
 			}
 		} else {
+			System.out.println("GENERIC MOTION EVENT, handled as mouse");
+
 			return handleMouseEvent(event);
 		}
 
@@ -444,11 +448,11 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 
 	static boolean handleMotionEvent(final MotionEvent event) {
 		if (isMouseEvent(event)) {
-			// System.out.println("handleMotionEvent NO ARGUMENTS");
+			// System.out.println("handleMotionEvent MOUSE");
 			return handleMouseEvent(event);
 		}
 
-		// System.out.println("handlemotionevent TOUCH");
+		// System.out.println("handleMotionEvent TOUCH");
 		return handleTouchEvent(event);
 	}
 
@@ -463,6 +467,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 	}
 	static boolean handleMotionEvent(int eventSource, int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, boolean doubleTap, float pressure) {
 		if (isMouseEvent(eventSource)) {
+			// System.out.println("handleMotionEvent TOUCH");
 			return handleMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleTap, false, pressure);
 		}
 
@@ -554,10 +559,10 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 				// System.out.println("handlemousevent hover with tilt");
 				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, 1f, 0f, 0f);
 			case SPEN_ACTION_DOWN:
+			case SPEN_ACTION_MOVE:
 			case MotionEvent.ACTION_BUTTON_PRESS:
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_MOVE:
-			case SPEN_ACTION_MOVE:
 			case MotionEvent.ACTION_SCROLL: {
 				// System.out.println("handlemouseevent tilt "+ tiltX);
 				GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, pressure, tiltX, tiltY);

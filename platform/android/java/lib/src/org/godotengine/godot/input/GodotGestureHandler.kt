@@ -150,20 +150,20 @@ internal class GodotGestureHandler : SimpleOnGestureListener(), OnScaleGestureLi
 			if (contextClickInProgress || GodotInputHandler.isMouseEvent(event)) {
 				// This may be an ACTION_BUTTON_RELEASE event which we don't handle,
 				// so we convert it to an ACTION_UP event.
-				GodotInputHandler.handleMouseEvent(
-					MotionEvent.ACTION_UP,
-					event.buttonState,
-					event.x,
-					event.y,
-					0f,
-					0f,
-					false,
-					sourceMouseRelative,
-					event.pressure,
-				)
+				// GodotInputHandler.handleMouseEvent(
+				// 	MotionEvent.ACTION_UP,
+				// 	event.buttonState,
+				// 	event.x,
+				// 	event.y,
+				// 	0f,
+				// 	0f,
+				// 	false,
+				// 	sourceMouseRelative,
+				// 	event.pressure,
+				// )
 			} else {
-				GodotInputHandler.handleTouchEvent(event)
 			}
+				GodotInputHandler.handleTouchEvent(event)
 			pointerCaptureInProgress = false
 			dragInProgress = false
 			contextClickInProgress = false
@@ -208,7 +208,7 @@ internal class GodotGestureHandler : SimpleOnGestureListener(), OnScaleGestureLi
 	}
 
 	override fun onDoubleTap(event: MotionEvent): Boolean {
-		nextDownIsDoubleTap = true
+		nextDownIsDoubleTap = false
 		return true
 	}
 
