@@ -210,9 +210,9 @@ void AndroidInputHandler::process_touch_event(int p_event, int p_pointer, const 
 }
 
 void AndroidInputHandler::_parse_mouse_event_info(int buttons_mask, bool p_pressed, bool p_double_click, bool p_source_mouse_relative, float p_pressure) {
-	// if (!mouse_event_info.valid) {
-	// 	return;
-	// }
+	if (!mouse_event_info.valid) {
+		return;
+	}
 
 	Ref<InputEventMouseButton> ev;
 	ev.instance();
@@ -271,9 +271,9 @@ void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_an
 		} break;
 		// case GodotInputHandler.SPEN_ACTION_MOVE:
 		case AMOTION_EVENT_ACTION_MOVE: {
-			// if (!mouse_event_info.valid) {
+			if (!mouse_event_info.valid) {
 			// 	print_line("CPP MOUSE EVENT INVALID");
-			// 	return;
+				return;
 			// }
 			// print_line("CPP MOUSE MOVE!");
 			Ref<InputEventMouseMotion> ev;
