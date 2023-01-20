@@ -2314,10 +2314,10 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 	if (touch_event.is_valid()) {
 		Size2 pos = touch_event->get_position();
 
-		if (!gui.mouse_focus) {
-			gui.mouse_focus_mask = 0;
-			return;
-		}
+		// if (!gui.mouse_focus) {
+		// 	gui.mouse_focus_mask = 0;
+		// 	return;
+		// }
 		if (touch_event->is_pressed()) {
 			Control *over = _gui_find_control(pos);
 			if (over) {
@@ -2343,10 +2343,10 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 				return;
 			}
 		} else if (touch_event->get_index() == 0 && gui.last_mouse_focus) {
-			if (!gui.mouse_focus) {
-				//release event is only sent if a mouse focus (previously pressed button) exists
-				return;
-			}
+			// if (!gui.mouse_focus) {
+			// 	//release event is only sent if a mouse focus (previously pressed button) exists
+			// 	return;
+			// }
 
 			// Size2 pos = mpos;
 
@@ -2364,18 +2364,18 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 			if (gui.mouse_focus && gui.mouse_focus->can_process()) {
 				touch_event = touch_event->xformed_by(Transform2D()); //make a copy
 				touch_event->set_position(gui.focus_inv_xform.xform(pos));
-				set_input_as_handled();
 				_gui_call_input(gui.mouse_focus, touch_event);
+				set_input_as_handled();
 			}
 
 
 			
-			if (gui.last_mouse_focus->can_process()) {
-				touch_event = touch_event->xformed_by(Transform2D()); //make a copy
-				touch_event->set_position(gui.focus_inv_xform.xform(pos));
-				_gui_call_input(gui.last_mouse_focus, touch_event);
-				set_input_as_handled();
-			}
+			// if (gui.last_mouse_focus->can_process()) {
+			// 	touch_event = touch_event->xformed_by(Transform2D()); //make a copy
+			// 	touch_event->set_position(gui.focus_inv_xform.xform(pos));
+			// 	_gui_call_input(gui.last_mouse_focus, touch_event);
+			// 	set_input_as_handled();
+			// }
 			return;
 		}
 	}

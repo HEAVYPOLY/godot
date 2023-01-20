@@ -271,9 +271,9 @@ void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_an
 		} break;
 		// case GodotInputHandler.SPEN_ACTION_MOVE:
 		case AMOTION_EVENT_ACTION_MOVE: {
-			if (!mouse_event_info.valid) {
+			// if (!mouse_event_info.valid) {
 			// 	print_line("CPP MOUSE EVENT INVALID");
-				return;
+				// return;
 			// }
 			// print_line("CPP MOUSE MOVE!");
 			Ref<InputEventMouseMotion> ev;
