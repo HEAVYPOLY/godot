@@ -2337,7 +2337,7 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 			Control *over = Object::cast_to<Control>(ObjectDB::get_instance(control_id));
 			if (over && over->can_process()) {
 				touch_event = touch_event->xformed_by(Transform2D()); //make a copy
-				if (over == gui.last_mouse_focus) {
+				if (over) {
 					pos = gui.focus_inv_xform.xform(pos);
 				} else {
 					pos = over->get_global_transform_with_canvas().affine_inverse().xform(pos);
