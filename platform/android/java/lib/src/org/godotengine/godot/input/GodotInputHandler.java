@@ -488,18 +488,30 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		float verticalFactor = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
 		float horizontalFactor = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
 		float pressure = event.getPressure();
-		float tiltX = event.getAxisValue(MotionEvent.AXIS_TILT_X);
-		float tiltY = event.getAxisValue(MotionEvent.AXIS_TILT_Y);
+		float tiltX = 0f;
+		float tiltY = 0f;
+		
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+				tiltX = event.getAxisValue(MotionEvent.AXIS_TILT_X);
+				tiltY = event.getAxisValue(MotionEvent.AXIS_TILT_Y);
+		}
+		
+		boolean sourceMouseRelative = false;
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+				sourceMouseRelative = event.isFromSource(InputDevice.SOURCE_MOUSE_RELATIVE);
+		}
+		
+		GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, pressure, tiltX, tiltY, doubleClick, sourceMouseRelative);
 
 		// Check if the event has tilt data
 		if (Float.isNaN(tiltX) || Float.isNaN(tiltY)) {
-			tiltX = 0; // Default value if tilt data is not available
-			tiltY = 0; // Default value if tilt data is not available
+			tiltX = 0f; // Default value if tilt data is not available
+			tiltY = 0f; // Default value if tilt data is not available
 		}
 
 		// Check if the event has pressure data
 		if (Float.isNaN(pressure)) {
-			pressure = 1; // Default value if pressure data is not available
+			pressure = 1f; // Default value if pressure data is not available
 		}
 
 		boolean sourceMouseRelative = false;
@@ -553,10 +565,40 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 	}
 
 	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, float pressure, float tiltX, float tiltY, boolean doubleClick, boolean sourceMouseRelative) {
-    GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, pressure, tiltX, tiltY, doubleClick, sourceMouseRelative);
-    return true;
-	}
-	
+    // Fix the buttonsMask
+    switch (eventAction) {
+        case MotionEvent.ACTION_CANCEL:
+        case MotionEvent.ACTION_UP:
+            // Zero-up the button state
+            buttonsMask = 0;
+            break;
+        case MotionEvent.ACTION_DOWN:
+        case MotionEvent.ACTION_MOVE:
+            if (buttonsMask == 0) {
+                buttonsMask = MotionEvent.BUTTON_PRIMARY;
+            }
+            break;
+    }
+
+    // We don't handle ACTION_BUTTON_PRESS and ACTION_BUTTON_RELEASE events as they typically
+    // follow ACTION_DOWN and ACTION_UP events. As such, handling them would result in duplicate
+    // stream of events to the engine.
+    switch (eventAction) {
+        case MotionEvent.ACTION_CANCEL:
+        case MotionEvent.ACTION_UP:
+        case MotionEvent.ACTION_DOWN:
+        case MotionEvent.ACTION_HOVER_ENTER:
+        case MotionEvent.ACTION_HOVER_EXIT:
+        case MotionEvent.ACTION_HOVER_MOVE:
+        case MotionEvent.ACTION_MOVE:
+        case MotionEvent.ACTION_SCROLL: {
+            GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, pressure, tiltX, tiltY, doubleClick, sourceMouseRelative);
+            return true;
+        }
+    }
+    return false;
+}
+
 	static boolean handleTouchEvent(final MotionEvent event) {
 		final int pointerCount = event.getPointerCount();
 		if (pointerCount == 0) {
