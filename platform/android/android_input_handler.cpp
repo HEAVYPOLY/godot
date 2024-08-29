@@ -256,6 +256,8 @@ void AndroidInputHandler::_release_mouse_event_info(bool p_source_mouse_relative
 
 void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_android_buttons_mask, Point2 p_event_pos, Vector2 p_delta, float p_pressure, Vector2 p_tilt, bool p_double_click, bool p_source_mouse_relative) {
 	int event_buttons_mask = _android_button_mask_to_godot_button_mask(p_event_android_buttons_mask);
+	OS::get_singleton()->print("Mouse event pressure: %f\n", p_pressure, p_tilt.x, p_tilt.y);
+
 	switch (p_event_action) {
 		case AMOTION_EVENT_ACTION_HOVER_MOVE: // hover move
 		case AMOTION_EVENT_ACTION_HOVER_ENTER: // hover enter
