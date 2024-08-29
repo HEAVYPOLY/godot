@@ -485,27 +485,28 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		final float y = event.getY();
 		final int buttonsMask = event.getButtonState();
 
-		float verticalFactor = 0;
-		float horizontalFactor = 0;
+		float verticalFactor = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
+		float horizontalFactor = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
+		float pressure = event.getPressure();
+		float tiltX = event.getAxisValue(MotionEvent.AXIS_TILT_X);
+		float tiltY = event.getAxisValue(MotionEvent.AXIS_TILT_Y);
 
-		// If event came from RotaryEncoder (Bezel or Crown rotate event on Wear OS smart watches),
-		// convert it to mouse wheel event.
-		if (event.isFromSource(InputDevice.SOURCE_ROTARY_ENCODER)) {
-			if (rotaryInputAxis == ROTARY_INPUT_HORIZONTAL_AXIS) {
-				horizontalFactor = -event.getAxisValue(MotionEvent.AXIS_SCROLL);
-			} else {
-				// If rotaryInputAxis is not ROTARY_INPUT_HORIZONTAL_AXIS then use default ROTARY_INPUT_VERTICAL_AXIS axis.
-				verticalFactor = -event.getAxisValue(MotionEvent.AXIS_SCROLL);
-			}
-		} else {
-			verticalFactor = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
-			horizontalFactor = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
+		// Check if the event has tilt data
+		if (Float.isNaN(tiltX) || Float.isNaN(tiltY)) {
+			tiltX = 0; // Default value if tilt data is not available
+			tiltY = 0; // Default value if tilt data is not available
 		}
+
+		// Check if the event has pressure data
+		if (Float.isNaN(pressure)) {
+			pressure = 1; // Default value if pressure data is not available
+		}
+
 		boolean sourceMouseRelative = false;
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 			sourceMouseRelative = event.isFromSource(InputDevice.SOURCE_MOUSE_RELATIVE);
 		}
-		return handleMouseEvent(eventAction, buttonsMask, x, y, horizontalFactor, verticalFactor, false, sourceMouseRelative);
+		return handleMouseEvent(eventAction, buttonsMask, x, y, horizontalFactor, verticalFactor, pressure, tiltX, tiltY, false, sourceMouseRelative);
 	}
 
 	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y) {
@@ -551,6 +552,11 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		return false;
 	}
 
+	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, float pressure, float tiltX, float tiltY, boolean doubleClick, boolean sourceMouseRelative) {
+    GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, pressure, tiltX, tiltY, doubleClick, sourceMouseRelative);
+    return true;
+	}
+	
 	static boolean handleTouchEvent(final MotionEvent event) {
 		final int pointerCount = event.getPointerCount();
 		if (pointerCount == 0) {
