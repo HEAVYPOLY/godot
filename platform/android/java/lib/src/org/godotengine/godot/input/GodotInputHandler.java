@@ -488,39 +488,21 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		float verticalFactor = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
 		float horizontalFactor = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
 		float pressure = event.getPressure();
-		float tiltX = 0f;
-		float tiltY = 0f;
-		
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-				tiltX = event.getAxisValue(MotionEvent.AXIS_TILT_X);
-				tiltY = event.getAxisValue(MotionEvent.AXIS_TILT_Y);
+		float tiltX = 0;
+		float tiltY = 0;
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+			tiltX = event.getAxisValue(MotionEvent.AXIS_TILT_X);
+			tiltY = event.getAxisValue(MotionEvent.AXIS_TILT_Y);
 		}
-		
+
 		boolean sourceMouseRelative = false;
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				sourceMouseRelative = event.isFromSource(InputDevice.SOURCE_MOUSE_RELATIVE);
-		}
-		
-		GodotLib.dispatchMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, pressure, tiltX, tiltY, doubleClick, sourceMouseRelative);
-
-		// Check if the event has tilt data
-		if (Float.isNaN(tiltX) || Float.isNaN(tiltY)) {
-			tiltX = 0f; // Default value if tilt data is not available
-			tiltY = 0f; // Default value if tilt data is not available
-		}
-
-		// Check if the event has pressure data
-		if (Float.isNaN(pressure)) {
-			pressure = 1f; // Default value if pressure data is not available
-		}
-
-		boolean sourceMouseRelative = false;
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-			sourceMouseRelative = event.isFromSource(InputDevice.SOURCE_MOUSE_RELATIVE);
 		}
 		return handleMouseEvent(eventAction, buttonsMask, x, y, horizontalFactor, verticalFactor, pressure, tiltX, tiltY, false, sourceMouseRelative);
 	}
-
+	
 	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y) {
 		return handleMouseEvent(eventAction, buttonsMask, x, y, 0, 0, false, false);
 	}
