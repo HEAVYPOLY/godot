@@ -518,8 +518,8 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 			sourceMouseRelative = event.isFromSource(InputDevice.SOURCE_MOUSE_RELATIVE);
 		}
 
-		tiltX = (float) (tilt * Math.sin(orientation));
-		tiltY = (float) (tilt * Math.cos(orientation));
+		tiltX = (float) (tilt * Math.cos(orientation + Math.PI / 2));
+		tiltY = (float) (tilt * Math.sin(orientation + Math.PI / 2));
 		Log.d("GodotInputHandler", "move" + eventAction + " buttonMask " + buttonsMask + " pressure " + pressure + " tilt " + tiltX);
 		pressure = event.getPressure();
 		return handleMouseEvent(eventAction, buttonsMask, x, y, horizontalFactor, verticalFactor, false, sourceMouseRelative, pressure, tiltX, tiltY);
