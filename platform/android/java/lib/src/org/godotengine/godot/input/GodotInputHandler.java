@@ -220,9 +220,10 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		}
 
 		if (isMouseEvent(event)) {
+			Log.d("GodotInputHandler", "on Touch Event mouse");
 			return handleMouseEvent(event);
 		}
-
+		Log.d("GodotInputHandler", "on Touch Event touch");
 		return handleTouchEvent(event);
 	}
 
@@ -234,10 +235,10 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 			return true;
 		}
 
-		if (godotGestureHandler.onMotionEvent(event)) {
-			// The gesture handler has handled the event.
-			return true;
-		}
+		// if (godotGestureHandler.onMotionEvent(event)) {
+		// 	// The gesture handler has handled the event.
+		// 	return true;
+		// }
 
 		if (event.isFromSource(InputDevice.SOURCE_JOYSTICK) && event.getActionMasked() == MotionEvent.ACTION_MOVE) {
 			// Check if the device exists
@@ -455,11 +456,14 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			mouseSource = mouseSource || ((eventSource & InputDevice.SOURCE_MOUSE_RELATIVE) == InputDevice.SOURCE_MOUSE_RELATIVE);
 		}
+		if (eventSource == 20482) {
+			mouseSource = true;
+		}
 		return mouseSource;
 	}
 
 	static boolean handleMotionEvent(final MotionEvent event) {
-		Log.d("GodotInputHandler", "handleMotionEvent " + event.getPressure());
+		Log.d("GodotInputHandler", "handle Motion Event " + event.getPressure() + " " + isMouseEvent(event));
 		if (isMouseEvent(event)) {
 			return handleMouseEvent(event);
 		}
@@ -574,6 +578,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		if (pointerCount == 0) {
 			return true;
 		}
+		Log.d("GodotInputHandler", "handleTouchEvent " + pointerCount);
 
 		final float[] positions = new float[pointerCount * 3]; // pointerId1, x1, y1, pointerId2, etc...
 
