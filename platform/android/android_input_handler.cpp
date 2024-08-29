@@ -225,6 +225,7 @@ void AndroidInputHandler::_parse_mouse_event_info(int buttons_mask, bool p_press
 	if (!mouse_event_info.valid) {
 		return;
 	}
+	OS::get_singleton()->print("process_mouse_event info  " );
 
 	Ref<InputEventMouseButton> ev;
 	ev.instance();
@@ -256,7 +257,6 @@ void AndroidInputHandler::_release_mouse_event_info(bool p_source_mouse_relative
 
 void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_android_buttons_mask, Point2 p_event_pos, Vector2 p_delta, float p_pressure, Vector2 p_tilt, bool p_double_click, bool p_source_mouse_relative) {
 	int event_buttons_mask = _android_button_mask_to_godot_button_mask(p_event_android_buttons_mask);
-	OS::get_singleton()->print("Mouse event pressure: %f\n", p_pressure, p_tilt.x, p_tilt.y);
 
 	switch (p_event_action) {
 		case AMOTION_EVENT_ACTION_HOVER_MOVE: // hover move
@@ -283,6 +283,8 @@ void AndroidInputHandler::process_mouse_event(int p_event_action, int p_event_an
 
 			mouse_event_info.valid = true;
 			mouse_event_info.pos = p_event_pos;
+			OS::get_singleton()->print("Mouse down");
+
 			_parse_mouse_event_info(event_buttons_mask, true, false, p_double_click, p_source_mouse_relative);
 		} break;
 

@@ -452,6 +452,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 			// System.out.println("ismouseevent eventsource == 20482");
 			mouseSource = true;
 		}
+		Log.d("Input", "is mouse event " + mouseSource + "  " + eventSource);
 		return mouseSource;
 	}
 
@@ -466,7 +467,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 			return handleMouseEvent(event);
 		}
 
-		// System.out.println("handlemotionevent TOUCH");
+		Log.d("Input", "handleMotionEvent touch 1");
 		return handleTouchEvent(event);
 	}
 
@@ -491,7 +492,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		if (isMouseEvent(eventSource)) {
 			return handleMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleTap, false, pressure, tiltX, tiltY);
 		}
-
+		Log.d("Input", "handleMotionEvent touch 2" + eventAction + " pressure " + pressure);
 		return handleTouchEvent(eventAction, x, y, doubleTap);
 	}
 	static boolean handleMouseEvent(final MotionEvent event) {
@@ -510,7 +511,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 			sourceMouseRelative = event.isFromSource(InputDevice.SOURCE_MOUSE_RELATIVE);
 		}
 		// Log the event details to the logcat instead of using System.out.println
-		Log.d("GodotInputHandler", "MotionEvent naked pressure " + pressure + " ACTION " + eventAction);
+		// Log.d("GodotInputHandler", "MotionEvent naked pressure " + pressure + " ACTION " + eventAction);
 
 		return handleMouseEvent(eventAction, buttonsMask, x, y, horizontalFactor, verticalFactor, false, sourceMouseRelative, pressure, orientation, tilt);
 	}
@@ -525,7 +526,10 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y, boolean doubleClick) {
 		return handleMouseEvent(eventAction, buttonsMask, x, y, 0, 0, doubleClick, false, .9999f);
 	}
-
+	
+	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, boolean doubleClick, boolean sourceMouseRelative) {
+		return handleMouseEvent(eventAction, buttonsMask, x, y, deltaX, deltaY, doubleClick, sourceMouseRelative, .9999f);
+	}
 	
 	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, boolean doubleClick, boolean sourceMouseRelative, float pressure) {
 		// We don't handle ACTION_BUTTON_PRESS and ACTION_BUTTON_RELEASE events as they typically
