@@ -459,6 +459,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 	}
 
 	static boolean handleMotionEvent(final MotionEvent event) {
+		Log.d("GodotInputHandler", "handleMotionEvent " + event.getPressure());
 		if (isMouseEvent(event)) {
 			return handleMouseEvent(event);
 		}
@@ -486,12 +487,12 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		final int eventAction = event.getActionMasked();
 		final float x = event.getX();
 		final float y = event.getY();
-		final float pressure = event.getPressure();
 		final float tilt = event.getAxisValue(MotionEvent.AXIS_TILT);
 		final float orientation = event.getOrientation();
 		final int buttonsMask = event.getButtonState();
-		float tiltX = 0;
-		float tiltY = 0;
+		float pressure = 0f;
+		float tiltX = 0f;
+		float tiltY = 0f;
 		float verticalFactor = 0;
 		float horizontalFactor = 0;
 
@@ -512,9 +513,9 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 			sourceMouseRelative = event.isFromSource(InputDevice.SOURCE_MOUSE_RELATIVE);
 		}
-
-		Log.d("GodotInputHandler", "handleMouseEvent " + horizontalFactor + " " + verticalFactor + " ACTION " + eventAction + " buttonMask " + buttonsMask);
-		return handleMouseEvent(eventAction, buttonsMask, x, y, horizontalFactor, verticalFactor, false, sourceMouseRelative, pressure, orientation, tilt);
+		pressure = event.getPressure();
+		Log.d("GodotInputHandler", "handleMouseEvent " + eventAction + " buttonMask " + buttonsMask + " pressure " + pressure + " tilt " + tiltX);
+		return handleMouseEvent(eventAction, buttonsMask, x, y, horizontalFactor, verticalFactor, false, sourceMouseRelative, pressure, tiltX, tiltY);
 
 	}
 	static boolean handleMouseEvent(int eventAction, int buttonsMask, float x, float y, float deltaX, float deltaY, boolean doubleClick, boolean sourceMouseRelative) {

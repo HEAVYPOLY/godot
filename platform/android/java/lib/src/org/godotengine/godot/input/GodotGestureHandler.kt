@@ -149,16 +149,17 @@ internal class GodotGestureHandler : SimpleOnGestureListener(), OnScaleGestureLi
 			if (contextClickInProgress || GodotInputHandler.isMouseEvent(event)) {
 				// This may be an ACTION_BUTTON_RELEASE event which we don't handle,
 				// so we convert it to an ACTION_UP event.
-				GodotInputHandler.handleMouseEvent(
-					MotionEvent.ACTION_UP,
-					event.buttonState,
-					event.x,
-					event.y,
-					0f,
-					0f,
-					false,
-					sourceMouseRelative
-				)
+				GodotInputHandler.handleMouseEvent(event)
+				// GodotInputHandler.handleMouseEvent(
+				// 	MotionEvent.ACTION_UP,
+				// 	event.buttonState,
+				// 	event.x,
+				// 	event.y,
+				// 	0f,
+				// 	0f,
+				// 	false,
+				// 	sourceMouseRelative
+				// )
 			} else {
 				GodotInputHandler.handleTouchEvent(event)
 			}
@@ -178,16 +179,18 @@ internal class GodotGestureHandler : SimpleOnGestureListener(), OnScaleGestureLi
 			} else {
 				false
 			}
-			GodotInputHandler.handleMouseEvent(
-				event.actionMasked,
-				MotionEvent.BUTTON_SECONDARY,
-				event.x,
-				event.y,
-				0f,
-				0f,
-				false,
-				sourceMouseRelative
-			)
+			GodotInputHandler.handleMouseEvent(event)
+
+			// GodotInputHandler.handleMouseEvent(
+			// 	event.actionMasked,
+			// 	MotionEvent.BUTTON_SECONDARY,
+			// 	event.x,
+			// 	event.y,
+			// 	0f,
+			// 	0f,
+			// 	false,
+			// 	sourceMouseRelative,
+			// )
 			return true
 		}
 		return false
