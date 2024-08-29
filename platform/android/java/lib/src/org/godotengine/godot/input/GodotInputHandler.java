@@ -59,7 +59,10 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 
 	private static final int ROTARY_INPUT_VERTICAL_AXIS = 1;
 	private static final int ROTARY_INPUT_HORIZONTAL_AXIS = 0;
-
+	private static final int SPEN_ACTION_DOWN = 211;
+	private static final int SPEN_ACTION_UP = 212;
+	private static final int SPEN_ACTION_MOVE = 213;
+	private static final int SPEN_ACTION_CANCEL = 214;
 	private final SparseIntArray mJoystickIds = new SparseIntArray(4);
 	private final SparseArray<Joystick> mJoysticksDevices = new SparseArray<>(4);
 
@@ -484,8 +487,8 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		final float x = event.getX();
 		final float y = event.getY();
 		final float pressure = event.getPressure();
-		final float tiltX = event.getTiltX();
-		final float tiltY = event.getTiltY();
+		final float tilt = event.getAxisValue(MotionEvent.AXIS_TILT);
+		final float orientation = event.getOrientation();
 		final int buttonsMask = event.getButtonState();
 
 		float verticalFactor = 0;
