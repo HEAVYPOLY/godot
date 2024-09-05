@@ -345,7 +345,6 @@ static const int max_touches = 32;
 
 		if (touch.type == UITouchTypeStylus) {
 			CGVector azimuth = [touch azimuthUnitVectorInView:self];
-			// CGFloat altitudeAngle = (1.0 - ((3.14159/2.0) / [touch altitudeAngle])) / 3.14159;
 			OSIPhone::get_singleton()->pencil_drag(tid, prev_point.x * self.contentScaleFactor, prev_point.y * self.contentScaleFactor, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor, force, -azimuth.dx , -azimuth.dy);
 		} else {
 			OSIPhone::get_singleton()->touch_drag(tid, prev_point.x * self.contentScaleFactor, prev_point.y * self.contentScaleFactor, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor);
