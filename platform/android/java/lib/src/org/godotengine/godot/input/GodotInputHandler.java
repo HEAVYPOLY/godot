@@ -220,10 +220,10 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		}
 
 		if (isMouseEvent(event)) {
-			Log.d("GodotInputHandler", "on Touch Event mouse");
+			// Log.d("GodotInputHandler", "on Touch Event mouse");
 			return handleMouseEvent(event);
 		}
-		Log.d("GodotInputHandler", "on Touch Event touch");
+		// Log.d("GodotInputHandler", "on Touch Event touch");
 		return handleTouchEvent(event);
 	}
 
@@ -463,7 +463,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 	}
 
 	static boolean handleMotionEvent(final MotionEvent event) {
-		Log.d("GodotInputHandler", "handle Motion Event " + event.getPressure() + " " + isMouseEvent(event));
+		// Log.d("GodotInputHandler", "handle Motion Event " + event.getPressure() + " " + isMouseEvent(event));
 		if (isMouseEvent(event)) {
 			return handleMouseEvent(event);
 		}
@@ -520,7 +520,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 
 		tiltX = (float) (tilt * Math.cos(orientation + Math.PI / 2));
 		tiltY = (float) (tilt * Math.sin(orientation + Math.PI / 2));
-		Log.d("GodotInputHandler", "move" + eventAction + " buttonMask " + buttonsMask + " pressure " + pressure + " tilt " + tiltX);
+		// Log.d("GodotInputHandler", "move" + eventAction + " buttonMask " + buttonsMask + " pressure " + pressure + " tilt " + tiltX);
 		pressure = event.getPressure();
 		return handleMouseEvent(eventAction, buttonsMask, x, y, horizontalFactor, verticalFactor, false, sourceMouseRelative, pressure, tiltX, tiltY);
 
@@ -581,7 +581,7 @@ public class GodotInputHandler implements InputManager.InputDeviceListener {
 		if (pointerCount == 0) {
 			return true;
 		}
-		Log.d("GodotInputHandler", "handleTouchEvent " + pointerCount);
+		// Log.d("GodotInputHandler", "handleTouchEvent " + pointerCount);
 
 		final float[] positions = new float[pointerCount * 3]; // pointerId1, x1, y1, pointerId2, etc...
 
