@@ -269,7 +269,7 @@ void OSIPhone::key(uint32_t p_key, bool p_pressed) {
 	perform_event(ev);
 };
 
-void OSIPhone::pencil_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick, float p_tilt_x, float p_tilt_y) {
+void OSIPhone::pencil_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick) {
     Ref<InputEventMouseButton> ev;
     ev.instance();
     ev->set_button_index(1);
@@ -277,7 +277,6 @@ void OSIPhone::pencil_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_
     ev->set_position(Vector2(p_x, p_y));
     ev->set_global_position(Vector2(p_x, p_y));
     ev->set_doubleclick(p_doubleclick);
-    ev->set_tilt(Vector2(p_tilt_x, p_tilt_y));
     perform_event(ev);
 }
 
@@ -293,7 +292,7 @@ void OSIPhone::pencil_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p
 }
 
 void OSIPhone::pencil_cancelled(int p_idx) {
-	pencil_press(p_idx, -1, -1, false, false, 0, 0);
+	pencil_press(p_idx, -1, -1, false, false);
 }
 
 void OSIPhone::touch_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick) {
