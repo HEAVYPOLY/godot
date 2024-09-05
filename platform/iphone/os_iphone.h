@@ -143,9 +143,9 @@ public:
 	virtual int get_screen_dpi(int p_screen = -1) const;
 	virtual float get_screen_refresh_rate(int p_screen = -1) const;
 
-	void pencil_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick);
+	void pencil_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick, float p_tilt_x, float p_tilt_y);
 	void touch_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick);
-	void pencil_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p_y, float p_force);
+	void pencil_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p_y, float p_force, float p_tilt_x, float p_tilt_y);
 	void touch_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p_y);
 	void touches_cancelled(int p_idx);
 	void pencil_cancelled(int p_idx);
